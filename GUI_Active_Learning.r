@@ -2,19 +2,24 @@ library('ProjectTemplate')
 load.project()
 
 h_gen_data <- function(h,...) {
-	data <<- gen_data(
+	# TODO: Let user specify this. It must be greater than 1.
+	num_labeled_per_class <- 5
+	data <<- gen_partial_labeled_data(
+		num_labeled_per_class = num_labeled_per_class,
 		n = svalue(rdo_sample_sizes),
 		num_groups = svalue(cbo_num_groups),
 		shape = svalue(rdo_shapes),
 		dist = svalue(distance_slider))
-	plot_bivariate(data$X1, data$X2, data$y)
+	plot_bivariate(data$X1, data$X2, data$obs_label)
 }
 
 h_query_oracle <- function(h, ...) {
-	print(svalue(cbo_query_methods))
-	oracle_out <- active_learn(data = data, method = tolower(svalue(cbo_query_methods)))
-	data <- oracle_out$data
-	plot_bivariate(data$X1, data$X2, data$y)
+	oracle_out <- active_learn(data = data,
+		method = tolower(svalue(cbo_query_methods)),
+		how_many = svalue(cbo_num_query)
+	)
+	data <<- oracle_out$data
+	plot_bivariate(data$X1, data$X2, data$obs_label)
 }
 
 # Constants to generate data.

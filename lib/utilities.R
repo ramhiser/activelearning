@@ -55,6 +55,34 @@ gen_data <- function(n = 30, num_groups = 3, shape = "Spherical", dist = 3) {
 	out
 }
 
+# Generates partially labeled bivariate normal data.
+#
+# For active learning demonstrations, it is useful to generate data
+# that is partially labeled. We do this by generating data
+# with gen_data(), changing "y" to "true_label," and then adding
+# "obs_label," which contain the labels observed by the user.
+# Ideally, the "obs_label" should match the ground truth labels in
+# "true_label," but a major concern that must be taken serious is
+# an imperfect oracle, who made label an observation incorrectly.
+gen_partial_labeled_data <- function(num_labeled_per_class = 5, ...) {
+	if(num_labeled_per_class <= 1) {
+		warning("At least 2 observations per class need to be labeled.")
+		return(NULL)
+	}
+	data <- gen_data(...)
+	names(data) <- c("X1", "X2", "true_label")
+	N <- length(data$y)
+	data$obs_label <- "unlabeled"
+	
+	labeled_elements <- c(sapply(levels(data$true_label), function(class) {
+		sample(which(data$true_label == class), num_labeled_per_class)
+	}))
+
+	data$obs_label[labeled_elements] <- factor(as.character(data$true_label[labeled_elements]))
+	
+	data
+}
+
 # Plots a bivariate distribution with x1 on the x-axis and x2 on the y-axis.
 # y is a vector of labels for each population.
 plot_bivariate <- function(x1, x2, y) {
@@ -95,6 +123,12 @@ oracle_random <- function(data, how_many = 1) {
 # The oracle has a specified percent change of being correct.
 # If the oracle is wrong, an incorrect label is selected at random.
 # Returns the number(s) of the observation to query
+#
+# Example: Queries oracle for 10 labels with 25% chance of being wrong.
+# 
+# out <- oracle_imperfect_random(data, 10, imperfection_rate = 0.25)
+# data$obs_label[out$label_which] <- out$labels
+#
 oracle_imperfect_random <- function(data, how_many = 1, imperfection_rate = 0.1) {
 	# The imperfection rate is a probability and must be in [0,1].
 	stopifnot(0 <= imperfection_rate && imperfection_rate <= 1)
