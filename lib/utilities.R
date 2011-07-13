@@ -85,8 +85,13 @@ gen_partial_labeled_data <- function(num_labeled_per_class = 5, ...) {
 
 # Plots a bivariate distribution with x1 on the x-axis and x2 on the y-axis.
 # y is a vector of labels for each population.
-plot_bivariate <- function(x1, x2, y) {
-	print(qplot(x = x1, y = x2, group = y, color = y))
+plot_bivariate <- function(data) {
+	labeled_data <- subset(data, data$obs_label != "unlabeled")
+	unlabeled_data <- subset(data, data$obs_label == "unlabeled")
+	p <- ggplot(labeled_data, aes(x = X1, y = X2, group = obs_label, color = obs_label))
+	p <- p + geom_point() #+ opts(legend.title = "Groups")
+	p <- p + geom_point(color = "black", alpha = 0.15, data = unlabeled_data)
+	print(p)
 }
 
 # This function acts as a facade to query an oracle in one of several ways.
