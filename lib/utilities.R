@@ -88,9 +88,9 @@ gen_partial_labeled_data <- function(num_labeled_per_class = 5, ...) {
 plot_bivariate <- function(data) {
 	labeled_data <- subset(data, data$obs_label != "unlabeled")
 	unlabeled_data <- subset(data, data$obs_label == "unlabeled")
-	p <- ggplot(labeled_data, aes(x = X1, y = X2, group = obs_label, color = obs_label))
-	p <- p + geom_point() #+ opts(legend.title = "Groups")
-	p <- p + geom_point(color = "black", alpha = 0.15, data = unlabeled_data)
+	p <- ggplot(labeled_data, aes(x = X1, y = X2, group = obs_label))
+	p <- p + geom_point(aes(color = obs_label), size = 5) #+ opts(legend.title = "Groups")
+	p <- p + geom_point(size = 1.5, data = unlabeled_data)
 	print(p)
 }
 
@@ -158,4 +158,34 @@ oracle_imperfect_random <- function(data, how_many = 1, imperfection_rate = 0.1)
 	})
 	
 	list(label_which = label_which, labels = labels)
+}
+
+# Computes error rates with various classifiers
+# Uses Linear Discriminant Analysis, 1-Nearest Neighbor,
+# Support Vector Machines (with radial basis function),
+# and Random Forests.
+#
+# All defaults are used.
+#
+# Need to specify the data with label 'obs_label'
+# Need to specify test_data as well
+#
+error_rates <- function(data, test_data) {
+	training <- subset(data, obs_label != "unlabeled")
+	training$obs_label <- factor(training$obs_label)
+
+	test_x <- subset(test_data, select = c("X1", "X2"))
+	test_y <- test_data$true_label
+
+	lda_out <- lda(obs_label ~ X1 + X2, data = training)
+	knn_out <- knn3(obs_label ~ X1 + X2, data = training, k = 1)
+	rf_out <- randomForest(obs_label ~ X1 + X2, data = training)
+	svm_out <- ksvm(obs_label ~ X1 + X2, data = training)
+
+	lda_error <- mean(predict(lda_out, test_x)$class != test_y)
+	knn_error <- mean(predict(knn_out, test_x, type = "class") != test_y)
+	rf_error <- mean(predict(rf_out, test_x) != test_y)
+	svm_error <- mean(predict(svm_out, test_x) != test_y)
+
+	list(LDA = lda_error, KNN = knn_error, RF = rf_error, SVM = svm_error)
 }

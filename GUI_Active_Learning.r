@@ -3,13 +3,21 @@ load.project()
 
 h_gen_data <- function(h,...) {
 	n <- svalue(rdo_sample_sizes)
-	num_labeled_per_class <- floor(n * svalue(rdo_pct_labeled) / 100)
+	num_labeled_per_class <- floor(n * svalue(slid_pct_labeled) / 100)
 	data <<- gen_partial_labeled_data(
 		num_labeled_per_class = num_labeled_per_class,
 		n = n,
 		num_groups = svalue(cbo_num_groups),
 		shape = svalue(rdo_shapes),
-		dist = svalue(distance_slider))
+		dist = svalue(slid_group_distance)
+	)
+	test_data <<- gen_partial_labeled_data(
+		num_labeled_per_class = 1000,
+		n = 1000,
+		num_groups = svalue(cbo_num_groups),
+		shape = svalue(rdo_shapes),
+		dist = svalue(slid_group_distance)
+	)
 	plot_bivariate(data)
 }
 
@@ -22,9 +30,18 @@ h_query_oracle <- function(h, ...) {
 	plot_bivariate(data)
 }
 
+h_query_oracle_simulation <- function(h, ...) {
+	oracle_out <- active_learn(data = data,
+		method = tolower(svalue(cbo_query_methods)),
+		how_many = svalue(cbo_num_query)
+	)
+	data <<- oracle_out$data
+	plot_bivariate(data)
+}
+
 # Constants to generate data.
 sample_sizes <- c(50, 100, 200, 300)
-pct_labeled <- c(25, 50, 75, 100)
+#pct_labeled <- c(25, 50, 75, 100)
 num_groups <- seq.int(2, 5)
 shapes <- c(
 	Spherical = "Spherical",
@@ -33,6 +50,11 @@ shapes <- c(
 query_methods <- c(Random="sample")
 num_query <- seq.int(1, 5)
 
+
+# I'm making 'data' global to make querying the oracle easier.
+# Yes, this is cheating and is bad practice.
+data <- NULL
+test_data <- NULL
 
 # Create the layout of the window.
 options(guiToolkit = "RGtk2")
@@ -51,10 +73,10 @@ PerformanceGroup <- ggroup(cont = gNotebook)
 names(gNotebook) <- c("Data", "Accuracy")
 
 # GUI Controls.
-distance_slider <- gslider(from=0.01,to=10,by=.01, value=3)
+slid_group_distance <- gslider(from=0.01,to=10,by=.01, value=3)
 cbo_num_groups <- gcombobox(num_groups)
 rdo_sample_sizes <- gradio(sample_sizes)
-rdo_pct_labeled <- gradio(pct_labeled)
+slid_pct_labeled <- gslider(from=1,to=100,by=1, value=10)
 rdo_shapes <- gradio(shapes)
 btn_gen_data <- gbutton("Generate Data", handler=h_gen_data)
 cbo_query_methods <- gcombobox(names(query_methods))
@@ -69,9 +91,9 @@ add(tmp, cbo_num_groups)
 tmp <- gframe("Sample Size", container = gDataGenGroup)
 add(tmp, rdo_sample_sizes)
 tmp <- gframe("Percentage of Data to Label", container = gDataGenGroup)
-add(tmp, rdo_pct_labeled)
+add(tmp, slid_pct_labeled, expand=TRUE)
 tmp <- gframe("Distance between Groups", container = gDataGenGroup)
-add(tmp, distance_slider, expand=TRUE)
+add(tmp, slid_group_distance, expand=TRUE)
 add(tmp, btn_gen_data)
 tmp <- gframe("Oracle", container = gDataGenGroup)
 add(tmp, cbo_query_methods)
@@ -81,8 +103,7 @@ add(tmp, btn_query_oracle)
 # Now to add a graphics device.
 add(gDataGroup, ggraphics())
 
+# This focuses the window to the first tab (i.e. "Data").
+svalue(gNotebook) <- 1
 
-
-# I'm making 'data' global to make querying the oracle easier.
-# Yes, this is cheating and is bad practice.
-data <- NULL
+results <- NULL
