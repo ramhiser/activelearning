@@ -1,0 +1,9 @@
+Examine active learning performance for some of the mlbench data sets.
+If we replace LDA with another classifier, how do things perform?
+	SVM, logistic regression, random forests, MDEB?
+
+May need to write a report about active learning, the methods that we are considering, why we are considering them, and where we see room for improvement.
+	Maximize loss * marginal (over all unlabeled)
+	Noisy oracles
+		Multiple oracles disagree
+		Oracle's performance decays

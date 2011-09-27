@@ -1,0 +1,5 @@
+data_loading: off
+munging: off
+logging: off
+load_libraries: on
+libraries: reshape, plyr, ggplot2, stringr, lubridate, foreach, mlbench, doMC, mvtnorm, kernlab, randomForest, MASS, gWidgets

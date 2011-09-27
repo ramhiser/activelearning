@@ -1,0 +1,15 @@
+T 20 Sept 2011
+
+Two things to note:
+
+First, the active learning problem may be able to be framed as "minorization" problem. See page 294 of the EoSL book. Note expression (8.63) resembles the approach needed for active learning.
+
+Second, on page 126 of the Statistical Learning from a Regression Perspective text, the author explicitly writes the risk associated with a decision (here, the decision is a node of a CART) as the weighted average loss. This is exactly what the information density approach uses.
+
+In Chapter 4 of Burr Settles dissertation (http://www.cs.cmu.edu/~bsettles/pub/settles.thesis.pdf), he provides details about the Information Density approach to Active Learning. Note that he provides several choices of similarity functions, in particular the independent Gaussian function. He then says that tuning the variance parameters does not really make sense because we don't know what it means to optimize them. However, if we approach this in the same way: that is determine a set of distributions that have as their marginal distribution the independent Gaussian. So, then we can explicitly optimize the variance parameters. I actually think this would be a very good approach to active learning: doing everything under the assumption of independence. It will be fast, and for large data sets, I presume it will do quite well. Keep in mind that we can do this in a Bayesian fashion because the posteriors from the labeled data can act as the priors for the marginal. A mixture Gaussian for each class might also be a good thing.
+
+We may able to do batch mode to determine multiple observations at once that would jointly maximize the risk.
+
+Then, compare his information density functions with my diagonal Gaussian marginal approach and see who wins. He has done a good job of demonstrating how to compare the different methods; just mimic him as much as possible.
+
+For diplomatic reasons, I would like to invite Burrs Settles to contribute to the paper. Once I have developed my model and written it up in a rough draft format, email him to set up a phone call regarding his information density. Just be up front: it's your idea, I applied Bayes, and I would like you to be a co-author on the paper since you know active learning so well. What do you say?
