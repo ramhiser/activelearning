@@ -1,9 +1,6 @@
-Examine active learning performance for some of the mlbench data sets.
-If we replace LDA with another classifier, how do things perform?
-	SVM, logistic regression, random forests, MDEB?
+Throw an error if the "uncertainty" measure is incorrect in uncert_sampling().
+ Write a unit test to catch this.
 
-May need to write a report about active learning, the methods that we are considering, why we are considering them, and where we see room for improvement.
-	Maximize loss * marginal (over all unlabeled)
-	Noisy oracles
-		Multiple oracles disagree
-		Oracle's performance decays
+In uncert_sampling():
+	The line with "which(order(obs_uncertainty, decreasing = T) <= num_query)" does not preserve the rank order.
+	Need to change this, so that the first index corresponds to the element with the largest uncertainty.
