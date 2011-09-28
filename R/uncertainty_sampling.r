@@ -62,7 +62,7 @@ uncert_sampling <- function(x, y, uncertainty = "entropy", cl_train, cl_predict,
     })
   } # else: Should never get here
   
-	least_certain <- order(obs_uncertainty, decreasing = T)[seq_len(num_query)]
+	query <- order(obs_uncertainty, decreasing = T)[seq_len(num_query)]
 	
-	list(least_certain = least_certain, obs_uncertainty = obs_uncertainty, posterior = posterior, unlabeled = unlabeled)
+	list(query = query, obs_uncertainty = obs_uncertainty, posterior = posterior, unlabeled = unlabeled)
 }

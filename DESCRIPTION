@@ -1,0 +1,11 @@
+Package: actlearn
+Title: A Collection of Active Learning Methods in R
+Version: 0.0.1
+Date: 2011-09-27
+Author: John A. Ramey
+Maintainer: John A. Ramey <johnramey@gmail.com>
+Description: Active learning is a machine learning paradigm for optimally choosing unlabeled observations in a training data set to query for their true labels. The framework is particularly useful when there are very few labeled observations relative to a large number of unlabeled observations, and the user seeks to determine as few true labels as possible to achieve highly accurate classifiers.  This package is a collection of various active learning methods from the literature to optimally query observations with respect to a variety of objective functions. Some active learning methods require posterior probability estimates of the unlabeled observations from a single classifier or a committee of classifiers; this package allows the user to specify custom classifiers. An excellent literature survey has been provided by Dr. Burr Settles.
+Depends:
+	foreach,
+	mlbench
+License: GPL-2
