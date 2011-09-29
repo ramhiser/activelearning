@@ -8,3 +8,7 @@ When returning results from the active learning functions, consider the followin
 	consider naming this the same as the uncertainty or disagreement measure.
 	Example: If we are considering 'entropy' in uncert_sampling(), then return
 	'entropy' as a list component instead of 'obs_uncertainty'
+	
+Entropy in uncert_sampling() breaks if any of the probabilities are 0. Because 0 log 0 => NaN
+
+

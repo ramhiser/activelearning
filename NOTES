@@ -1,3 +1,29 @@
+W 28 Sept 2011
+
+In the active learning literature, a number of researchers use the entropy measure to compute
+disagreement or uncertainty and query the unlabeled observation that maximizes this quantity.
+I ran into an issue where one of the posterior probabilities was estimated to be 0.
+Of course, then the entropy includes the 0 * log(0) term, which results in NaN in R.
+This can reasonably be defined as 0 because p * log(p) approaches 0 as p goes to 0. But to
+calculate this, I was having to add logic into code I was trying to vectorize.
+
+So I started looking for R packages on CRAN that would do this for me. Of course, there is
+a package called 'entropy' from Strimmer's lab (man, that guy does a lot). As I was looking
+at the documentation for his R package, he mentions that the usual plug-in value for
+entropy can be very biased. I was a bad statistician just using the plug-in principle
+with the sample proportions in place of the population proportions in the entropy function.
+In the R package, he gives several different estimators for the entropy.
+
+My question then is on the usage of the plug-in entropy in active learning. Does it matter
+which we use? If not, then that's fine, I'll write a nice little blog post and move on.
+But if it can lead to different results, especially for large unlabeled data or large number of classes or whatever, then this is worth mentioning at a conference. I mention the large number
+of classes because Strimmer mentions that if there are a lot of zero counts, the plug-in
+entropy metric is going to be very biased.
+
+This would be worth investigating after I have gotten a lot of the simulation code written.
+The modification to my existing code would be relatively simple and could just be a branch
+for an afternoon if nothing pans out.
+
 T 20 Sept 2011
 
 Two things to note:

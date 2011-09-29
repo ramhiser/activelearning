@@ -57,9 +57,7 @@ uncert_sampling <- function(x, y, uncertainty = "entropy", cl_train, cl_predict,
       obs_post[order(obs_post, decreasing = T)[1:2]] %*% c(1, -1)
     })
   } else if(uncertainty == "entropy") {
-    obs_uncertainty <- apply(posterior, 1, function(obs_post) {
-      -obs_post %*% log(obs_post)
-    })
+    obs_uncertainty <- apply(posterior, 1, entropy.plugin)
   } # else: Should never get here
   
 	query <- order(obs_uncertainty, decreasing = T)[seq_len(num_query)]

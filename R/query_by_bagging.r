@@ -7,7 +7,7 @@
 #'
 #' To determine maximum disagreement among bagged committe members, we have implemented three approaches:
 #' 1. vote_entropy: query the unlabeled observation that maximizes the vote entropy among all commitee members
-#' 2. post_entropy: query the unlabeled observation that maximizes the posterior entropy of all committee members
+#' 2. post_entropy: query the unlabeled observation that maximizes the entropy of average posterior probabilities of all committee members
 #' 3. kullback: query the unlabeled observation that maximizes the Kullback-Leibler divergence between the label distributions of any one committe member and the consensus.
 #' The 'disagreement' argument must be one of the three: 'kullback' is the default.
 #'
@@ -54,10 +54,6 @@ query_by_bagging <- function(x, y, disagreement = "kullback", cl_train, cl_predi
   train_y <- y[-unlabeled]
   test_x <- x[unlabeled, ]
 
-	if(is.vector(posterior)) {
-	  posterior <- matrix(posterior, nrow = 1)
-	}
-
 	# Bagged predictions
 	bagged_pred <- foreach(b = seq_len(B)) %dopar% {
 		boot <- sample(n, replace = T)
@@ -66,25 +62,23 @@ query_by_bagging <- function(x, y, disagreement = "kullback", cl_train, cl_predi
 	}
 	
 	bagged_post <- lapply(bagged_pred, function(x) x$posterior)
-	bagged_class <- lapply(bagged_pred, function(x) x$class)
+	bagged_class <- do.call(rbind, lapply(bagged_pred, function(x) x$class))
 	
 	if(uncertainty == "vote_entropy") {
-    obs_uncertainty <- lapply(bagged_pred, function() {
-      
+    obs_disagreement <- apply(bagged_class, 2, function(x) {
+      entropy.empirical(table(factor(x, levels = classes)))
     })
   } else if(uncertainty == "post_entropy") {
-    # TODO: Replace vote_entropy's V(y_i) / C with the average posterior probability for class y_i
+    bagged_post <- lapply(bagged_pred, function(x) x$posterior)
+    average_posteriors <- Reduce('+', bagged_post) / length(bagged_post)
+    obs_disagreement <- apply(average_posteriors, 1, function(obs_post) {
+      entropy.plugin(obs_post)
+    })
   } else if(uncertainty == "kullback") {
-    
+    stop("Not yet implemented")
   } # else: Should never get here
-
-	# Computes the voting entropy for each unlabeled observation.
-	vote_entropy <- sapply(boot_pred, function(pred) {
-		table_pred <- table(pred)
-		-sum((table_pred / B) * log(table_pred / B))
-	})
 	
 	query <- order(obs_uncertainty, decreasing = T)[seq_len(num_query)]
 	
-	list(query = query, obs_uncertainty = obs_uncertainty, posterior = posterior, unlabeled = unlabeled)
+	list(query = query, obs_disagreement = obs_disagreement, bagged_class = bagged_class, bagged_post = bagged_post, unlabeled = unlabeled)
 }
