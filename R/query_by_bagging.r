@@ -5,6 +5,11 @@
 #' is to "query the oracle" with the observations that have the maximum disagreement among the
 #' B trained classifiers.
 #'
+#' Note that this approach is similar to "Query by Committee" (QBC), but each committee member
+#' uses the same classifier trained on a resampled subset of the labeled training data. With the
+#' QBC approach, the user specifies a comittee with C supervised classifiers that are each trained
+#' on the labeled training data. Also, note that we we have implemented QBC as query_by_committee.
+#'
 #' To determine maximum disagreement among bagged committe members, we have implemented three approaches:
 #' 1. vote_entropy: query the unlabeled observation that maximizes the vote entropy among all commitee members
 #' 2. post_entropy: query the unlabeled observation that maximizes the entropy of average posterior probabilities of all committee members
