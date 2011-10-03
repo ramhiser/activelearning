@@ -2,9 +2,12 @@ Throw an error if the "uncertainty" measure is incorrect in uncert_sampling().
  Write a unit test to catch this.
 Throw an error if the "disagreement" measure is incorrect in query_by_bagging().
  Write a unit test to catch this.
-The R package needs a spiffy new name.
 When returning results from the active learning functions, consider the following:
 	Rather than returning the 'obs_uncertainty' or something just as obscure,
 	consider naming this the same as the uncertainty or disagreement measure.
 	Example: If we are considering 'entropy' in uncert_sampling(), then return
 	'entropy' as a list component instead of 'obs_uncertainty'
+
+The R package needs a spiffy new name.
+
+Add note that we may be able to weight the Bayesian information density with a power prior.

@@ -11,6 +11,10 @@
 #' 3. kullback: query the unlabeled observation that maximizes the Kullback-Leibler divergence between the label distributions of any one committe member and the consensus.
 #' The 'disagreement' argument must be one of the three: 'kullback' is the default.
 #'
+#' To calculate the committee disagreement, we use the formulae from Dr. Burr Settles'
+#' "Active Learning Literature Survey" available on his website. At the time this function
+#' was coded, the literature survey had last been updated on January 26, 2010.
+#'
 #' We require a user-specified supervised classifier and its corresponding prediction
 #' (classification) function. These must be specified as strings in 'cl_train' and 'cl_predict', respectively.
 #' We assume that the 'cl_train' function accepts two arguments, x and y, as the matrix of feature vectors and
@@ -75,7 +79,10 @@ query_by_bagging <- function(x, y, disagreement = "kullback", cl_train, cl_predi
       entropy.plugin(obs_post)
     })
   } else if(uncertainty == "kullback") {
-    stop("Not yet implemented")
+    bagged_post <- lapply(bagged_pred, function(x) x$posterior)
+    consensus_prob <- Reduce('+', bagged_post) / length(bagged_post)
+    kl_post_by_member <- lapply(bagged_post, function(x) rowSums(x * log(x / consensus_prob)))
+    obs_disagreement <- Reduce('+', kl_post_by_member) / length(kl_post_by_member)
   } # else: Should never get here
 	
 	query <- order(obs_uncertainty, decreasing = T)[seq_len(num_query)]

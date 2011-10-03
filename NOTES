@@ -18,7 +18,10 @@ My question then is on the usage of the plug-in entropy in active learning. Does
 which we use? If not, then that's fine, I'll write a nice little blog post and move on.
 But if it can lead to different results, especially for large unlabeled data or large number of classes or whatever, then this is worth mentioning at a conference. I mention the large number
 of classes because Strimmer mentions that if there are a lot of zero counts, the plug-in
-entropy metric is going to be very biased.
+entropy metric is going to be very biased. They wrote a paper in Journal of Machine Learning
+Research.
+
+Our conference paper could be entitled: "On the Choice of Entropy Estimators in Active Learning"
 
 This would be worth investigating after I have gotten a lot of the simulation code written.
 The modification to my existing code would be relatively simple and could just be a branch
