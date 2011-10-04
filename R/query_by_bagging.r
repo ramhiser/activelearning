@@ -50,9 +50,10 @@
 #' @param cl_train a string that contains the supervised classifier's training function's name
 #' @param cl_predict a string that contains the supervised classifier's prediction function's name
 #' @param num_query the number of observations to be be queried.
+#' @param C the number of bootstrap committee members
 #' @param ... additional arguments that are sent to cl_train and cl_predict
 #' @return a list that contains the least_certain observation and miscellaneous results. See above for details.
-query_by_bagging <- function(x, y, disagreement = "kullback", cl_train, cl_predict, num_query = 1, B = 50, ...) {
+query_by_bagging <- function(x, y, disagreement = "kullback", cl_train, cl_predict, num_query = 1, C = 50, ...) {
 	unlabeled <- which(is.na(y))
 	n <- length(y) - length(unlabeled)
 
@@ -64,7 +65,7 @@ query_by_bagging <- function(x, y, disagreement = "kullback", cl_train, cl_predi
   test_x <- x[unlabeled, ]
 
 	# Bagged predictions
-	bagged_pred <- foreach(b = seq_len(B)) %dopar% {
+	bagged_pred <- foreach(b = seq_len(C)) %dopar% {
 		boot <- sample(n, replace = T)
 		train_out <- cl_train(x = train_x[boot, ], y = train_y[boot], ...)
 		cl_predict(train_out, test_x, ...)

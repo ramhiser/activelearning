@@ -8,6 +8,14 @@ When returning results from the active learning functions, consider the followin
 	Example: If we are considering 'entropy' in uncert_sampling(), then return
 	'entropy' as a list component instead of 'obs_uncertainty'
 
+Simulation
+	Pick 5-10(-ish) supervised classifiers.
+	Compare the supervised classifiers in the query-by-bagging approach with say B = 10, 50, and 100.
+		Compare them with each disagreement measure.
+		In webnotebook, create a plot for each B.
+	Also, compare the 10 classifiers in the query-by-committee approach.
+		Compare them with each disagreement measure.
+	
 The R package needs a spiffy new name.
 
 Add note that we may be able to weight the Bayesian information density with a power prior.
