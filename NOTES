@@ -1,3 +1,16 @@
+T 4 Oct 2011
+
+I looked through my active learning papers to see the types of data on which they performed
+their experiments, and it appears that almost everyone of them use text classification as
+their primary application. A couple of papers also considered facial recognition. Thus, it
+is clear that when I release a paper on this topic, at least one of the data sets needs to
+be a text classification paper.
+
+For now, I am going to use the Iris data set to set the simulations up correctly and
+to ensure that everything works with minimal computations. After that, I will begin
+looking at some of the UCI Machine Learning Repository data sets that can simply be
+plugged-in.
+
 W 28 Sept 2011
 
 In the active learning literature, a number of researchers use the entropy measure to compute
