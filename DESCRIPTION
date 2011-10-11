@@ -1,4 +1,4 @@
-Package: actlearn
+Package: activelearning
 Title: A Collection of Active Learning Methods in R
 Version: 0.0.1
 Date: 2011-09-27
@@ -29,3 +29,4 @@ Collate:
     'query_by_bagging.r'
     'query_by_committee.r'
     'uncertainty_sampling.r'
+    'random_query.r'

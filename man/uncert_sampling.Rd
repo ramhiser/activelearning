@@ -48,10 +48,12 @@
   posterior probabilities under the trained classifier 3.
   entropy: query the unlabeled observation maximizing
   posterior probabilities of each class under the trained
-  classifier The 'uncertainty' argument must be one of the
-  three: 'entropy' is the default. Note that the three
-  methods are equivalent (they yield the same observation
-  to be queried) with binary classification.
+  classifier
+
+  The 'uncertainty' argument must be one of the three:
+  'entropy' is the default.Note that the three methods are
+  equivalent (they yield the same observation to be
+  queried) with binary classification.
 
   We require a user-specified supervised classifier and its
   corresponding prediction (classification) function. These

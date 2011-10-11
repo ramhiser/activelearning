@@ -1,5 +1,21 @@
+Iris Data Set
+	Classifiers
+		Consider LDA, QDA, SVM (with RBF), and RF
+			Do this with 'caret'
+	Oracle Setup
+		The oracle is infallible.
+		Query 1 and 5 observations each time until done.
+	Active Learning Methods
+		Random query
+		Uncertainty Sampling with Iris Data Set
+			Use the 3 uncertainty sampling methods
+		Query by Bagging
+			Try B = 10, 50, and 100
+		(Optional) Query by Committee
+
 Simulation
 	Find 3 benchmark data sets and compare the methods.
+		For now, use Iris and two data sets on UCI Machine Learning Repository.
 	Pick 5-10(-ish) supervised classifiers.
 	Compare the supervised classifiers in the query-by-bagging approach with say B = 10, 50, and 100.
 		Compare them with each disagreement measure.
@@ -9,12 +25,8 @@ Simulation
 	Need a text classification data set in the actual paper since that is the application of most AL methods.
 	At some point, need to find a benchmark data set with at least one time-dependent covariate.
 		Do the methods still work with time-dependent covariates?
-		
-Outline a vignette
-	Look at some examples in Journal of Statistical Software for guides
-Copy vignette outline to a webnotebook
-Fill in some of the details in webnotebook
-Move code from inst/simulations/ to ProjectTemplate?
+
+
 
 
 Throw an error if the "uncertainty" measure is incorrect in uncert_sampling().
