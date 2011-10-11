@@ -1,3 +1,7 @@
+T 11 Oct 2011
+
+I've made a lot of progress today on some documentation for the active learning code, but now I'm working on a basic simulation using the random_query method. I have quickly realized that I have not enabled any way for the user to query the oracle. Rather than doing this manually, I'd prefer to have some function that does this so that an oracle can be "noisy" in a simulation setting. So, I have begun a new wrapper function called "actlearn" in ./R/actlearn.r that is an interface to all of the implemented active learning methods. We need to add the query option as an argument to it. Ultimately, a call to "actlearn" should return a list with at least a 'y' vector with updated labels and a vector that indicates which observations were queried.
+
 T 4 Oct 2011
 
 I looked through my active learning papers to see the types of data on which they performed

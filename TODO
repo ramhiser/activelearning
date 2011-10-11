@@ -13,6 +13,11 @@ Iris Data Set
 			Try B = 10, 50, and 100
 		(Optional) Query by Committee
 
+Move the vignette to ./inst/doc
+	After adding the initial simulation code to the vignette
+Build the package vignette through R.
+	Link: http://www.statistik.lmu.de/~leisch/Sweave/Sweave-Rnews-2003-2.pdf
+
 Simulation
 	Find 3 benchmark data sets and compare the methods.
 		For now, use Iris and two data sets on UCI Machine Learning Repository.
