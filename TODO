@@ -12,6 +12,7 @@ Iris Data Set
 		Query by Bagging
 			Try B = 10, 50, and 100
 		(Optional) Query by Committee
+Add a function that generates the experimental setup for active learning.
 
 Move the vignette to ./inst/doc
 	After adding the initial simulation code to the vignette

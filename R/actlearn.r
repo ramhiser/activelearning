@@ -24,6 +24,8 @@ actlearn <- function(x = NULL, y, y_truth = NULL, method, num_query = 1, ...) {
   # If so, then we cannot query an oracle automatically and return the results from the specified active learning method.
   if(!is.null(y_truth)) {
     method_out$queried_y <- query_oracle(i = method_out$query, y_truth)
+    y[method_out$query] <- method_out$queried_y
+    method_out$y <- y
   }
   method_out
 }
