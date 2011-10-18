@@ -1,48 +1,32 @@
 T 11 Oct 2011
 
+(A)
+
 I've made a lot of progress today on some documentation for the active learning code, but now I'm working on a basic simulation using the random_query method. I have quickly realized that I have not enabled any way for the user to query the oracle. Rather than doing this manually, I'd prefer to have some function that does this so that an oracle can be "noisy" in a simulation setting. So, I have begun a new wrapper function called "actlearn" in ./R/actlearn.r that is an interface to all of the implemented active learning methods. We need to add the query option as an argument to it. Ultimately, a call to "actlearn" should return a list with at least a 'y' vector with updated labels and a vector that indicates which observations were queried.
+
+(B)
+
+Yet another interesting thought about active learning. Rather than exclusively thinking of the data as being realizations from a stochastic process, we may think of them as fixed in a bootstrapping sense. The random query method is then a random sample from the empirical CDF of the unlabeled observations. In some sense, the method is naive because each observation has equal probability of being selected, when intuitively, this feels wrong and naive. Hence, an alternative is to randomly sample from the empirical CDF using different weights for each observation. But which weights to use? These certainly could be determined by some of the other methods, including the weaker active learning methods. And then some sampling approach, like importance sampling, could be used.
+
+If I am willing to really delve into the nonparametric notation and literature, this could make for a very rigorous paper using all of the empirical CDF methodology and notation. It looks much harder than it is.
 
 T 4 Oct 2011
 
-I looked through my active learning papers to see the types of data on which they performed
-their experiments, and it appears that almost everyone of them use text classification as
-their primary application. A couple of papers also considered facial recognition. Thus, it
-is clear that when I release a paper on this topic, at least one of the data sets needs to
-be a text classification paper.
+I looked through my active learning papers to see the types of data on which they performed their experiments, and it appears that almost everyone of them use text classification as their primary application. A couple of papers also considered facial recognition. Thus, it is clear that when I release a paper on this topic, at least one of the data sets needs to be a text classification paper.
 
-For now, I am going to use the Iris data set to set the simulations up correctly and
-to ensure that everything works with minimal computations. After that, I will begin
-looking at some of the UCI Machine Learning Repository data sets that can simply be
-plugged-in.
+For now, I am going to use the Iris data set to set the simulations up correctly and to ensure that everything works with minimal computations. After that, I will begin looking at some of the UCI Machine Learning Repository data sets that can simply be plugged-in.
 
 W 28 Sept 2011
 
-In the active learning literature, a number of researchers use the entropy measure to compute
-disagreement or uncertainty and query the unlabeled observation that maximizes this quantity.
-I ran into an issue where one of the posterior probabilities was estimated to be 0.
-Of course, then the entropy includes the 0 * log(0) term, which results in NaN in R.
-This can reasonably be defined as 0 because p * log(p) approaches 0 as p goes to 0. But to
-calculate this, I was having to add logic into code I was trying to vectorize.
+In the active learning literature, a number of researchers use the entropy measure to compute disagreement or uncertainty and query the unlabeled observation that maximizes this quantity. I ran into an issue where one of the posterior probabilities was estimated to be 0. Of course, then the entropy includes the 0 * log(0) term, which results in NaN in R. This can reasonably be defined as 0 because p * log(p) approaches 0 as p goes to 0. But to calculate this, I was having to add logic into code I was trying to vectorize.
 
-So I started looking for R packages on CRAN that would do this for me. Of course, there is
-a package called 'entropy' from Strimmer's lab (man, that guy does a lot). As I was looking
-at the documentation for his R package, he mentions that the usual plug-in value for
-entropy can be very biased. I was a bad statistician just using the plug-in principle
-with the sample proportions in place of the population proportions in the entropy function.
-In the R package, he gives several different estimators for the entropy.
+So I started looking for R packages on CRAN that would do this for me. Of course, there is a package called 'entropy' from Strimmer's lab (man, that guy does a lot). As I was looking at the documentation for his R package, he mentions that the usual plug-in value for entropy can be very biased. I was a bad statistician just using the plug-in principle with the sample proportions in place of the population proportions in the entropy function. In the R package, he gives several different estimators for the entropy.
 
-My question then is on the usage of the plug-in entropy in active learning. Does it matter
-which we use? If not, then that's fine, I'll write a nice little blog post and move on.
-But if it can lead to different results, especially for large unlabeled data or large number of classes or whatever, then this is worth mentioning at a conference. I mention the large number
-of classes because Strimmer mentions that if there are a lot of zero counts, the plug-in
-entropy metric is going to be very biased. They wrote a paper in Journal of Machine Learning
-Research.
+My question then is on the usage of the plug-in entropy in active learning. Does it matter which we use? If not, then that's fine, I'll write a nice little blog post and move on. But if it can lead to different results, especially for large unlabeled data or large number of classes or whatever, then this is worth mentioning at a conference. I mention the large number of classes because Strimmer mentions that if there are a lot of zero counts, the plug-in entropy metric is going to be very biased. They wrote a paper in Journal of Machine Learning Research.
 
 Our conference paper could be entitled: "On the Choice of Entropy Estimators in Active Learning"
 
-This would be worth investigating after I have gotten a lot of the simulation code written.
-The modification to my existing code would be relatively simple and could just be a branch
-for an afternoon if nothing pans out.
+This would be worth investigating after I have gotten a lot of the simulation code written. The modification to my existing code would be relatively simple and could just be a branch for an afternoon if nothing pans out.
 
 T 20 Sept 2011
 

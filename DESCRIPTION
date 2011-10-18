@@ -30,3 +30,5 @@ Collate:
     'query_by_committee.r'
     'uncertainty_sampling.r'
     'random_query.r'
+    'actlearn.r'
+    'oracle.r'

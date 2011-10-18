@@ -42,6 +42,11 @@ error_rate <- lapply(predict(trained_classifiers, test_x), function(pred) {
   mean(pred != test_y)
 })
 
+
+lapply(y, function(y_cl) {
+  actlearn(y, method = "random", num_query = 1)
+})
+
 # TODO Next need to use random querying to query the next observation
 # TODO Repeat the classification in a loop.
 
