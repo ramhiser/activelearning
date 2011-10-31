@@ -45,6 +45,4 @@ When returning results from the active learning functions, consider the followin
 	Example: If we are considering 'entropy' in uncert_sampling(), then return
 	'entropy' as a list component instead of 'obs_uncertainty'
 
-The R package needs a spiffy new name.
-
 Add note that we may be able to weight the Bayesian information density with a power prior.

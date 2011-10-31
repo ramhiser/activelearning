@@ -1,3 +1,28 @@
+2011-10-31 | 15:05 | Information Density
+
+[activelearning, information density, conference, publication]
+
+The deadline to submit a paper for ICML 2012 (June 25-29) in Edinburgh, Scotland is February 24, 2012. If the paper is conference ready, I would like to submit a conference paper on our view of the Information Density approach to active learning. Even with all of the dissertation stuff going on, if I can stay productive, I can pull this off. There will be many big names at the conference, so it's important that we don't submit the paper to ICML unless it's polished. Contrarily, I think that our idea is novel enough that it will be accepted. Furthermore, if we can present a Bayesian, Frequentist, or nonparametric (all of which could be done) viewpoint regarding the ad hoc nature of information density with a proposed algorithm for estimating parameters, then the method should be quite well-received.
+
+Properties of Information Density Worth Publishing:
+	- Weighted Loss Function
+	- Resembles a risk function or even a loss weighted by a marginal posterior.
+	- Loss Function weighted by Non-parametric Kernel Density Estimator
+		- The KDE can be viewed from a U-statistic perspective to estimate params.
+		- In particular, Burr Settles has said that it's not clear how to estimate
+		the params when using a Gaussian as a smoother. In terms of probability-
+		based generative model, the parameters are obvious how to estimate.
+	- Either extending the idea to a Bayesian or nonparametric approach makes
+	our method that much more novel, rather than just commentary on an existing
+	model.
+		
+
+Here is a link to the ICML 2012 website: http://icml.cc/2012/
+
+***
+
+
+
 T 11 Oct 2011
 
 (A)

@@ -28,7 +28,8 @@ label_which <- unlist(label_which, use.names = F)
 # We create a list of known labels for each classifier.
 # The remaining observations are labeled NA to indicate unlabeled.
 # Each classifier directly matches its name in the 'caret' package.
-classifiers <- c("lda", "qda", "svmRadial")
+# classifiers <- c("lda", "qda", "svmRadial")
+classifiers <- c("lda", "qda")
 y <- replace(rep(NA, N), label_which, y_truth[label_which])
 y <- rlply(length(classifiers), factor(y, levels = class_names))
 names(y) <- classifiers
