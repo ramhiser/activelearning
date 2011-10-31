@@ -31,4 +31,4 @@ Collate:
     'uncertainty_sampling.r'
     'random_query.r'
     'oracle.r'
-    'actlearn.r'
+    'activelearning.r'
