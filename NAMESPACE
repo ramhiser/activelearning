@@ -1,2 +1,2 @@
-export(actlearn)
+export(activelearning)
 export(query_oracle)

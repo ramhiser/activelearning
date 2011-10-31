@@ -50,7 +50,7 @@ error_out <- foreach(i = icount(num_iterations), .combine=rbind) %do% {
   print(error_rate)
 
   y <<- lapply(y, function(y_cl) {
-    actlearn(y = y_cl, y_truth = y_truth, method = "random", num_query = 1)$y  
+    activelearning(y = y_cl, y_truth = y_truth, method = "random", num_query = 1)$y  
   })
   
   rbind(error_rate)

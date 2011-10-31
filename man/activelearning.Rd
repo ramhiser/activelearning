@@ -1,9 +1,9 @@
-\name{actlearn}
-\alias{actlearn}
+\name{activelearning}
+\alias{activelearning}
 \title{Active Learning in R}
 \usage{
-  actlearn(x = NULL, y, y_truth = NULL, method, num_query =
-  1, ...)
+  activelearning(x = NULL, y, y_truth = NULL, method,
+  num_query = 1, ...)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled

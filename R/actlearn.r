@@ -9,7 +9,7 @@
 #' @param num_query the number of observations to be be queried.
 #' @param ... additional arguments sent to the chosen active learning method
 #' @return a list that contains the least_certain observation and miscellaneous results. See above for details.
-actlearn <- function(x = NULL, y, y_truth = NULL, method, num_query = 1, ...) {
+activelearning <- function(x = NULL, y, y_truth = NULL, method, num_query = 1, ...) {
   methods <- c("random", "uncertainty", "qbb", "qbc")
   stopifnot(method %in% c("random", "uncertainty", "qbb", "qbc"))
   
