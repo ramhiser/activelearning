@@ -3,7 +3,7 @@
 \title{Active Learning in R}
 \usage{
   activelearning(x = NULL, y, y_truth = NULL, method,
-  num_query = 1, ...)
+    num_query = 1, ...)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled

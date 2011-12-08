@@ -3,7 +3,7 @@
 \title{Active learning with "Query by Bagging"}
 \usage{
   query_by_bagging(x, y, disagreement = "kullback",
-  cl_train, cl_predict, num_query = 1, C = 50, ...)
+    cl_train, cl_predict, num_query = 1, C = 50, ...)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled

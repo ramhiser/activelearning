@@ -1,3 +1,95 @@
+2011-10-31 | 17:41 | Outline for Tomorrow's Meeting with Brett A. and Tom F.
+
+[activelearning, discussion]
+
+The typical approaches to active learning are simple. Do one of the following:
+	- Select the most improbable observation
+		- Requires a posterior probability estimate for each unlabeled observation
+	- Use a bagging approach
+		- This implicitly computes a posterior probability estimate in terms of
+		disagreement between different bagged classifiers
+	- Use a committee approach
+		- Once again this implicitly computes a posterior probability estimate
+	- Find observations that update the model with the most information
+		- This is often done in terms of the Kullback-Leibler divergence from the
+		posterior distribution to the prior for each observation. This can be
+		computationally demanding.
+		- This approach is often known as (Bayesian) optimal experimental design.
+	- Find the observation(s) that will maximize a reduction in expected error.
+	- Find the observations that maximize a reduction in prediction variance.
+		- Can partition risk (expected loss) into a sum of: (squared error loss)
+			- The noise in the data (irreducible)
+			- The bias of the classifier (model)
+			- The model's variance
+				- Minimizing the variance guarantees minimizing the future expected
+				error of the model.
+			- This leads to optimal experimental design approach used in regression.
+		- Often this is viewed in term of the inverse of Fisher's info. matrix
+			- For large models, this inverse is quite taxing and is impractical.
+			- Examples: A-optimality, D-optimality
+	- Density-weighted methods
+		- Simultaneously maximizes a measure of uncertainty (e.g. post. prob.)
+		and the average similarity of an unlabeled observation to its unlabeled
+		neighbors.
+		- This was considered in a text classification setting, but the similarity
+		should be thought of as a kernel density estimator or a marginal posterior
+		distribution. For an initially small set of labels, this may be valuable
+		because the similarity estimate should be reasonable. As the number of
+		unlabeled observations gets small with respect to the number of features,
+		the similarity estimate will become quite biased.
+
+From a theoretical standpoint, a large emphasis has been placed on the number of observations that need to be labeled to attain a specified classification error rate, similar to sample size determination studies.
+	- This largely ignores a lot of what occurs in practice.
+		- Assumes IID.
+		- Essentially, assumes infallible source of posterior prob. estimates.
+	- Uses a computational learning theory approach (think SVM/VC dimension).
+		- Generally assumes the data are noise-free and some model under
+		consideration can perfectly classify the instances.
+		- The requirement of perfect classification conflicts with a decision
+		theoretic usage of Bayes (optimal) error rate. If the Bayes error rate
+		is nonzero, then no classifier can perfectly classify the instances on
+		average.
+		- Furthermore, the No Free Lunch theorem tells us that there can be
+		no optimal classifier overall. That is, there are data sets for which
+		randomly classifying will be superior to a given classifier.
+
+When beginning with no labeled observations, it is often difficult to get started to actually start doing well. Suppose that we know that there are 5 classes. As a minimal requirement, each class will need 2-3 observations before a classifier for that class can be constructed. Assuming we are able to find those 2-3 observations up front, that will require 10-15 observations to be randomly chosen. In this base case, the bias of the classifiers will be quite large in that its parameters will be biased, especially for a large sample size. Hence, the probability estimates for any unlabeled observation should be used with caution.
+
+For data with a moderately large number of features, the sample size for each class needs to be large as well to obtain 'stable' classifications. However, intuitively, once we reach stability, active learning may not be as valuable.
+
+Perhaps, we should depend heavily on clustering upfront and naive classifiers.
+	- Naive classifiers are classifiers that make naive assumptions for speed,
+	simplicity, and model parsimony.
+	- Examples are Naive Bayes and diagonal discriminant analysis.
+
+Expert disagreement and noisy oracles
+	- The approach is to view the oracles in a committee and consider
+	the "votes" by each oracle for a specific class.
+	- There is a large amount of expert agreement literature in the
+	statistics literature.
+		- Example: Dr. Stamey at Baylor
+			- 10 experts look at an object to decide if it will break in the field
+			- Can't actually break the object or it can't be deployed
+			- May be too expensive or time-consuming to break it.
+
+Another interesting thing to note is that often there is a large emphasis on measuring the uncertainty of every unlabeled observation for each query. If the number of observations is in the billions, then the measures of uncertainty should become practically close, which implies that it may be hard to differentiate between an observation with a posterior probability of 0.02 and 0.021. It then makes sense to look at a random subset of the unlabeled observations rather than the entire set.
+
+...
+
+***
+
+
+
+2011-10-31 | 17:28 | Random Querying the Initial Training Labels
+
+[active learning, simulations]
+
+I noticed when working with the Iris data set, which has 4 features, that when I randomly selected 15 observations from each of the 3 classes, the covariance matrix of the centered 'setosa' class was singular. This occurred with the QDA classifier. I have experienced a couple of similar issues with the SVM classifiers used in the 'caret' package. This is important to note when we randomly query, say 10, observations at random from each class when the dimension of the data is extremely large. This suggests that the classifiers employed in active learning may have difficulties with classification early on in the querying process, due to the curse of dimensionality.
+
+***
+
+
+
 2011-10-31 | 15:05 | Information Density
 
 [activelearning, information density, conference, publication]
@@ -15,7 +107,8 @@ Properties of Information Density Worth Publishing:
 	- Either extending the idea to a Bayesian or nonparametric approach makes
 	our method that much more novel, rather than just commentary on an existing
 	model.
-		
+	
+Court Corley sent me an email with a paper by some from Microsoft guys who developed a model similar to my idea. The paper is by Chu, Zinkevich, Li, Thomas, and Tseng (2011 at KDD) called "Unbiased online active learning in data streams." An approach would be to show equivalence of our proposed method to theirs and perhaps some of Zoubin Gharamani's stuff.
 
 Here is a link to the ICML 2012 website: http://icml.cc/2012/
 

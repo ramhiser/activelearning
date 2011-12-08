@@ -2,8 +2,8 @@
 \alias{query_by_committee}
 \title{Active learning with "Query by Committee"}
 \usage{
-  query_by_committee(x, y, committee, disagreement =
-  "kullback", num_query = 1)
+  query_by_committee(x, y, committee,
+    disagreement = "kullback", num_query = 1)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled

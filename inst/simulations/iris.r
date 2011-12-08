@@ -21,7 +21,7 @@ x <- x[training_idx, ]
 y_truth <- y[training_idx]
 
 # We randomly label a specified number of observations from each class. We select the indices with stratified sampling, where each class is a stratum.
-num_labels <- 15
+num_labels <- 5
 label_which <- tapply(seq_along(y_truth), y_truth, sample, size = num_labels)
 label_which <- unlist(label_which, use.names = F)
 
@@ -29,19 +29,17 @@ label_which <- unlist(label_which, use.names = F)
 # The remaining observations are labeled NA to indicate unlabeled.
 # Each classifier directly matches its name in the 'caret' package.
 # classifiers <- c("lda", "qda", "svmRadial")
-classifiers <- c("lda", "qda")
+classifiers <- c("lda", "svmRadial")
 y <- replace(rep(NA, N), label_which, y_truth[label_which])
 y <- rlply(length(classifiers), factor(y, levels = class_names))
 names(y) <- classifiers
 
-num_iterations <- sum(is.na(y[[1]]))
+#num_iterations <- sum(is.na(y[[1]]))
+num_iterations <- 5
 
 error_out <- foreach(i = icount(num_iterations), .combine=rbind) %do% {
   trained_classifiers <- sapply(classifiers, function(cl) {
     training_idx <- which(!is.na(y[[cl]]))
-    print(i)
-    print(cl)
-    print(training_idx)
     train(x = x[training_idx, ], y = y[[cl]][training_idx], method = cl)
   }, simplify = F)
 

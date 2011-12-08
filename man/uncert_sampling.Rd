@@ -3,7 +3,7 @@
 \title{Active Learning with Uncertainty Sampling}
 \usage{
   uncert_sampling(x, y, uncertainty = "entropy", cl_train,
-  cl_predict, num_query = 1, ...)
+    cl_predict, num_query = 1, ...)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled
