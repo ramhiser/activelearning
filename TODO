@@ -2,7 +2,6 @@ Add some more to the active learning vignette
 With the Iris data set
 	Look at Uncertainty Sampling, Query by Bagging, and Query by Committee
 
-
 Iris Data Set
 	Classifiers
 		Consider LDA, QDA, SVM (with RBF), and RF
@@ -40,10 +39,6 @@ Simulation
 
 
 
-Throw an error if the "uncertainty" measure is incorrect in uncert_sampling().
- Write a unit test to catch this.
-Throw an error if the "disagreement" measure is incorrect in query_by_bagging().
- Write a unit test to catch this.
 When returning results from the active learning functions, consider the following:
 	Rather than returning the 'obs_uncertainty' or something just as obscure,
 	consider naming this the same as the uncertainty or disagreement measure.

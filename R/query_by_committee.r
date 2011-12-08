@@ -63,25 +63,27 @@ query_by_committee <- function(x, y, committee, disagreement = "kullback", num_q
 	
 	committee_post <- lapply(committee_pred, function(x) x$posterior)
 	committee_class <- do.call(rbind, lapply(committee_pred, function(x) x$class))
+
 	
-	if(uncertainty == "vote_entropy") {
-    obs_disagreement <- apply(committee_class, 2, function(x) {
-      entropy.empirical(table(factor(x, levels = classes)))
-    })
-  } else if(uncertainty == "post_entropy") {
-    committee_post <- lapply(committee_pred, function(x) x$posterior)
-    average_posteriors <- Reduce('+', committee_post) / length(committee_post)
-    obs_disagreement <- apply(average_posteriors, 1, function(obs_post) {
-      entropy.plugin(obs_post)
-    })
-  } else if(uncertainty == "kullback") {
-    committee_post <- lapply(committee_pred, function(x) x$posterior)
-    consensus_prob <- Reduce('+', committee_post) / length(committee_post)
-    kl_post_by_member <- lapply(committee_post, function(x) rowSums(x * log(x / consensus_prob)))
-    obs_disagreement <- Reduce('+', kl_post_by_member) / length(kl_post_by_member)
-  } # else: Should never get here
+	obs_disagreement <- switch(uncertainty,
+                             vote_entropy = apply(committee_class, 2, function(x) {
+                               entropy.empirical(table(factor(x, levels = classes)))
+                             }),
+                             post_entropy = {
+                               committee_post <- lapply(committee_pred, function(x) x$posterior)
+                               average_posteriors <- Reduce('+', committee_post) / length(committee_post)
+                               apply(average_posteriors, 1, function(obs_post) {
+                                 entropy.plugin(obs_post)
+                               })
+                             },
+                             kullback = {
+                               committee_post <- lapply(committee_pred, function(x) x$posterior)
+                               consensus_prob <- Reduce('+', committee_post) / length(committee_post)
+                               kl_post_by_member <- lapply(committee_post, function(x) rowSums(x * log(x / consensus_prob)))
+                               Reduce('+', kl_post_by_member) / length(kl_post_by_member)
+                             }
 	
-	query <- order(obs_uncertainty, decreasing = T)[seq_len(num_query)]
+	query <- order(obs_disagreement, decreasing = T)[seq_len(num_query)]
 	
 	list(query = query, obs_disagreement = obs_disagreement, committee_class = committee_class, committee_post = committee_post, unlabeled = unlabeled)
 }

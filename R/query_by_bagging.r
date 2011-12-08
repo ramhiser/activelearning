@@ -65,6 +65,7 @@ query_by_bagging <- function(x, y, disagreement = "kullback", cl_train, cl_predi
   test_x <- x[unlabeled, ]
 
 	# Bagged predictions
+  # TODO: Get rid of foreach
 	bagged_pred <- foreach(b = seq_len(C)) %dopar% {
 		boot <- sample(n, replace = T)
 		train_out <- cl_train(x = train_x[boot, ], y = train_y[boot], ...)
@@ -74,24 +75,25 @@ query_by_bagging <- function(x, y, disagreement = "kullback", cl_train, cl_predi
 	bagged_post <- lapply(bagged_pred, function(x) x$posterior)
 	bagged_class <- do.call(rbind, lapply(bagged_pred, function(x) x$class))
 	
-	if(uncertainty == "vote_entropy") {
-    obs_disagreement <- apply(bagged_class, 2, function(x) {
-      entropy.empirical(table(factor(x, levels = classes)))
-    })
-  } else if(uncertainty == "post_entropy") {
-    bagged_post <- lapply(bagged_pred, function(x) x$posterior)
-    average_posteriors <- Reduce('+', bagged_post) / length(bagged_post)
-    obs_disagreement <- apply(average_posteriors, 1, function(obs_post) {
-      entropy.plugin(obs_post)
-    })
-  } else if(uncertainty == "kullback") {
-    bagged_post <- lapply(bagged_pred, function(x) x$posterior)
-    consensus_prob <- Reduce('+', bagged_post) / length(bagged_post)
-    kl_post_by_member <- lapply(bagged_post, function(x) rowSums(x * log(x / consensus_prob)))
-    obs_disagreement <- Reduce('+', kl_post_by_member) / length(kl_post_by_member)
-  } # else: Should never get here
+	obs_disagreement <- switch(uncertainty,
+                             vote_entropy = apply(bagged_class, 2, function(x) {
+                               entropy.empirical(table(factor(x, levels = classes)))
+                             }),
+                             post_entropy = {
+                               bagged_post <- lapply(bagged_pred, function(x) x$posterior)
+                               average_posteriors <- Reduce('+', bagged_post) / length(bagged_post)
+                               apply(average_posteriors, 1, function(obs_post) {
+                                 entropy.plugin(obs_post)
+                               })
+                             },
+                             kullback = {
+                               bagged_post <- lapply(bagged_pred, function(x) x$posterior)
+                               consensus_prob <- Reduce('+', bagged_post) / length(bagged_post)
+                               kl_post_by_member <- lapply(bagged_post, function(x) rowSums(x * log(x / consensus_prob)))
+                               Reduce('+', kl_post_by_member) / length(kl_post_by_member)
+                             }
 	
-	query <- order(obs_uncertainty, decreasing = T)[seq_len(num_query)]
+	query <- order(obs_disagreement, decreasing = T)[seq_len(num_query)]
 	
 	list(query = query, obs_disagreement = obs_disagreement, bagged_class = bagged_class, bagged_post = bagged_post, unlabeled = unlabeled)
 }

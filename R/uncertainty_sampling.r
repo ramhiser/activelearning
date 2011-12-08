@@ -35,16 +35,13 @@ uncert_sampling <- function(x, y, uncertainty = "entropy", cl_train, cl_predict,
 	if(is.vector(posterior)) {
 	  posterior <- matrix(posterior, nrow = 1)
 	}
-
-  if(uncertainty == "least_confidence") {
-    obs_uncertainty <- apply(posterior, 1, max)
-  } else if(uncertainty == "margin") {
-    obs_uncertainty <- apply(posterior, 1, function(obs_post) {
-      obs_post[order(obs_post, decreasing = T)[1:2]] %*% c(1, -1)
-    })
-  } else if(uncertainty == "entropy") {
-    obs_uncertainty <- apply(posterior, 1, entropy.plugin)
-  } # else: Should never get here
+  obs_uncertainty <- switch(uncertainty,
+                       least_confidence = apply(posterior, 1, max),
+                       margin = apply(posterior, 1, function(obs_post) {
+                         obs_post[order(obs_post, decreasing = T)[1:2]] %*% c(1, -1)
+                       }),
+                       entropy = apply(posterior, 1, entropy.plugin)
+                     )
   
 	query <- order(obs_uncertainty, decreasing = T)[seq_len(num_query)]
 	
