@@ -1,16 +1,13 @@
-Update cl_train and cl_predict to functionality with match.fun in errorest
-  - How should this work for the committee?
-  - More specifically, how to pass ... to each classifier
-    - Ignore for now?
 Replace foreach with mclapply
   - Details?
 Add a function that generates the experimental setup for active learning.
   - Details?
 Start testing with iris data set and figure out the next step
+Determine how to pass arguments from ... to multiple classifiers in query_by_committee
 
-Add some more to the active learning vignette
-With the Iris data set
-	Look at Uncertainty Sampling, Query by Bagging, and Query by Committee
+
+Figure out how to work with vignette (i.e. more generally, knitr or Sweave) from emacs and ESS on Linux
+
 
 Iris Data Set
 	Classifiers
@@ -34,8 +31,12 @@ Build the package vignette through R.
 	Link: http://www.statistik.lmu.de/~leisch/Sweave/Sweave-Rnews-2003-2.pdf
 
 
+After the query_by_committee setup is determined, update its @examples to reflect the changes.
+
 When returning results from the active learning functions, consider the following:
 	Rather than returning the 'obs_uncertainty' or something just as obscure,
 	consider naming this the same as the uncertainty or disagreement measure.
 	Example: If we are considering 'entropy' in uncert_sampling(), then return
 	'entropy' as a list component instead of 'obs_uncertainty'
+
+Remove ~/projects/active-learning after double-checking that I have the report backed up in this package's /inst/
