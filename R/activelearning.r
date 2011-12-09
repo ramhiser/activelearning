@@ -3,15 +3,21 @@
 #' TODO
 #'
 #' @export
-#' @param x a matrix containing the labeled and unlabeled data
+#' @param x a matrix containing the labeled and unlabeled data. By default, 'x'
+#' is NULL for the case that 'method' is "random." If 'x' is NULL, and the
+#' 'method' is something other than "random," an error will be thrown.
 #' @param y a vector of the labels for each observation in x. Use NA for unlabeled.
 #' @param uncertainty a string that contains the uncertainty measure. See above for details.
 #' @param num_query the number of observations to be be queried.
 #' @param ... additional arguments sent to the chosen active learning method
 #' @return a list that contains the least_certain observation and miscellaneous results. See above for details.
-activelearning <- function(x, y, y_truth = NULL, method, num_query = 1, num_cores = 1, ...) {
+activelearning <- function(x = NULL, y, y_truth = NULL, method, num_query = 1, num_cores = 1, ...) {
   methods <- c("random", "uncertainty", "qbb", "qbc")
   stopifnot(method %in% c("random", "uncertainty", "qbb", "qbc"))
+
+  if (is.null(x) && method != "random") {
+    stop("The matrix 'x' cannot be NULL for the method, ", method)
+  }
   
   method_out <- switch(method,
     random = random_query(x = x, y = y, num_query = num_query),
