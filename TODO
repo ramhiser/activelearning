@@ -1,3 +1,13 @@
+Update cl_train and cl_predict to functionality with match.fun in errorest
+  - How should this work for the committee?
+  - More specifically, how to pass ... to each classifier
+    - Ignore for now?
+Replace foreach with mclapply
+  - Details?
+Add a function that generates the experimental setup for active learning.
+  - Details?
+Start testing with iris data set and figure out the next step
+
 Add some more to the active learning vignette
 With the Iris data set
 	Look at Uncertainty Sampling, Query by Bagging, and Query by Committee
@@ -16,27 +26,12 @@ Iris Data Set
 		Query by Bagging
 			Try B = 10, 50, and 100
 		(Optional) Query by Committee
-Add a function that generates the experimental setup for active learning.
+
 
 Move the vignette to ./inst/doc
 	After adding the initial simulation code to the vignette
 Build the package vignette through R.
 	Link: http://www.statistik.lmu.de/~leisch/Sweave/Sweave-Rnews-2003-2.pdf
-
-Simulation
-	Find 3 benchmark data sets and compare the methods.
-		For now, use Iris and two data sets on UCI Machine Learning Repository.
-	Pick 5-10(-ish) supervised classifiers.
-	Compare the supervised classifiers in the query-by-bagging approach with say B = 10, 50, and 100.
-		Compare them with each disagreement measure.
-		In webnotebook, create a plot for each B.
-	Also, compare the 10 classifiers in the query-by-committee approach.
-		Compare them with each disagreement measure.
-	Need a text classification data set in the actual paper since that is the application of most AL methods.
-	At some point, need to find a benchmark data set with at least one time-dependent covariate.
-		Do the methods still work with time-dependent covariates?
-
-
 
 
 When returning results from the active learning functions, consider the following:
@@ -44,5 +39,3 @@ When returning results from the active learning functions, consider the followin
 	consider naming this the same as the uncertainty or disagreement measure.
 	Example: If we are considering 'entropy' in uncert_sampling(), then return
 	'entropy' as a list component instead of 'obs_uncertainty'
-
-Add note that we may be able to weight the Bayesian information density with a power prior.
