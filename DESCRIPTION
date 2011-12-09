@@ -23,8 +23,8 @@ Description: Active learning is a machine learning paradigm
 Depends:
     R (>= 2.14),
     entropy,
-    foreach,
-    mlbench
+    mlbench,
+    parallel
 License: MIT
 Collate:
     'query_by_bagging.r'
