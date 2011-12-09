@@ -2,8 +2,8 @@
 \alias{query_by_bagging}
 \title{Active learning with "Query by Bagging"}
 \usage{
-  query_by_bagging(x, y, disagreement = "kullback",
-    cl_train, cl_predict, num_query = 1, C = 50, ...)
+  query_by_bagging(x, y, disagreement = "kullback", train,
+    predict, num_query = 1, C = 50, num_cores = 1, ...)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled
@@ -16,19 +16,17 @@
   disagreement measure among the committee members. See
   above for details.}
 
-  \item{cl_train}{a string that contains the supervised
-  classifier's training function's name}
+  \item{train}{a function to train a classifier}
 
-  \item{cl_predict}{a string that contains the supervised
-  classifier's prediction function's name}
+  \item{predict}{a function to predict (classify)
+  observations}
 
   \item{num_query}{the number of observations to be be
   queried.}
 
   \item{C}{the number of bootstrap committee members}
 
-  \item{...}{additional arguments that are sent to cl_train
-  and cl_predict}
+  \item{...}{additional arguments that are passed to train}
 }
 \value{
   a list that contains the least_certain observation and
@@ -72,39 +70,37 @@
 
   We require a user-specified supervised classifier and its
   corresponding prediction (classification) function. These
-  must be specified as strings in 'cl_train' and
-  'cl_predict', respectively. We assume that the 'cl_train'
-  function accepts two arguments, x and y, as the matrix of
-  feature vectors and their corresponding labels,
-  respectively. The 'cl_predict' function is assumed to
-  accept a trained object as its first argument and a
-  matrix of test observations as its second argument.
-  Furthermore, we assume that 'cl_predict' returns a list
-  that contains a 'posterior' component that is a matrix of
-  the posterior probabilities of class membership and a
-  'class' component that is a vector with the
-  classification of each test observation; the (i,j)th
-  entry of the 'posterior' matrix must be the posterior
-  probability of the ith observation belong to class j.
+  must be specified as functions in 'train' and 'predict',
+  respectively. We assume that the 'train' function accepts
+  two arguments, x and y, as the matrix of feature vectors
+  and their corresponding labels, respectively. The
+  'predict' function is assumed to accept a trained object
+  as its first argument and a matrix of test observations
+  as its second argument. Furthermore, we assume that
+  'predict' returns a list that contains a 'posterior'
+  component that is a matrix of the posterior probabilities
+  of class membership; the (i,j)th entry of the matrix must
+  be the posterior probability of the ith observation
+  belong to class j. If the 'posterior' component is not
+  available when required, an error is thrown.
+
   Usually, it is straightforward to implement a wrapper
-  function so that 'cl_train' and 'cl_predict' can be used.
-  Additional arguments to 'cl_train' and 'cl_predict' can
-  be passed via '...'
+  function so that 'train' and 'predict' can be used.
+
+  Additional arguments to 'train' can be passed via '...'.
 
   Unlabeled observations in 'y' are assumed to have NA for
   a label.
 
   It is often convenient to query unlabeled observations in
-  batch. By default, we query the unlabeled observation
-  with the largest disagreement measure value. With the
+  batch. By default, we query the unlabeled observations
+  with the largest uncertainty measure value. With the
   'num_query' the user can specify the number of
   observations to return in batch. If there are ties in the
-  disagreement measure values, they are broken by the order
+  uncertainty measure values, they are broken by the order
   in which the unlabeled observations are given.
 
-  This method uses the 'foreach' package and is set to do
-  the bagging in parallel if a parallel backend is
-  registered. If there is no parallel backend registered, a
-  warning is thrown, but everything will work just fine.
+  We use the 'parallel' package to perform the bagging in
+  parallel.
 }
 

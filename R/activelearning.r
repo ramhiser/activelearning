@@ -9,15 +9,15 @@
 #' @param num_query the number of observations to be be queried.
 #' @param ... additional arguments sent to the chosen active learning method
 #' @return a list that contains the least_certain observation and miscellaneous results. See above for details.
-activelearning <- function(x = NULL, y, y_truth = NULL, method, num_query = 1, ...) {
+activelearning <- function(x, y, y_truth = NULL, method, num_query = 1, num_cores = 1, ...) {
   methods <- c("random", "uncertainty", "qbb", "qbc")
   stopifnot(method %in% c("random", "uncertainty", "qbb", "qbc"))
   
   method_out <- switch(method,
-    random = random_query(y, num_query = num_query, ...),
-    uncertainty = uncert_sampling(y, num_query = num_query, ...),
-    qbb = query_by_bagging(y, num_query = num_query, ...),
-    qbc = query_by_committee(y, num_query = num_query, ...)
+    random = random_query(x = x, y = y, num_query = num_query),
+    uncertainty = uncert_sampling(x = x, y = y, num_query = num_query, ...),
+    qbb = query_by_bagging(x = x, y = y, num_query = num_query, num_cores = num_cores, ...),
+    qbc = query_by_committee(x = x, y = y, num_query = num_query, num_cores = num_cores, ...)
   )
   
   # In a realistic situation, the y_truth vector may not be available (NULL).

@@ -72,7 +72,7 @@
 #'    RDA = list(train = rda_wrapper, train_args = rda_args, predict = predict),
 #'    RDA_auto = list(train = rda_wrapper, predict = predict)
 #' )
-query_by_committee <- function(x, y, committee, disagreement = "kullback", num_query = 1) {
+query_by_committee <- function(x, y, committee, disagreement = "kullback", num_query = 1, num_cores = 1, ...) {
 	unlabeled <- which(is.na(y))
 	n <- length(y) - length(unlabeled)
   
@@ -81,14 +81,14 @@ query_by_committee <- function(x, y, committee, disagreement = "kullback", num_q
   test_x <- x[unlabeled, ]
 
 	# Committee predictions
-	committee_pred <- foreach(c_member = committee) %dopar% {
-	  cl_predict <- get(c_member$predict)
+	committee_pred <- mclapply(committee, function(c_member) {
+	  predict <- get(c_member$predict)
 	  args_string <- paste(names(c_member$train_args), c_member$train_args$train_args, sep = "=", collapse = ", ")
 	  args_string <- paste('x = train_x, y = train_y, ', args_string, sep = "")
     function_call <- paste(c_member$train, "(", args_string, ")", sep = "")
     train_out <- eval(parse(text = function_call))
-		cl_predict(train_out, test_x)
-	}
+		predict(train_out, test_x)
+	})
 	
 	committee_post <- lapply(committee_pred, function(x) x$posterior)
 	committee_class <- do.call(rbind, lapply(committee_pred, function(x) x$class))
@@ -111,6 +111,7 @@ query_by_committee <- function(x, y, committee, disagreement = "kullback", num_q
                                kl_post_by_member <- lapply(committee_post, function(x) rowSums(x * log(x / consensus_prob)))
                                Reduce('+', kl_post_by_member) / length(kl_post_by_member)
                              }
+                             )
 	
 	query <- order(obs_disagreement, decreasing = T)[seq_len(num_query)]
 	

@@ -21,10 +21,11 @@ Description: Active learning is a machine learning paradigm
     to specify custom classifiers. An excellent literature
     survey has been provided by Dr. Burr Settles.
 Depends:
+    R (>= 2.14),
     entropy,
     foreach,
     mlbench
-License: GPL-2
+License: MIT
 Collate:
     'query_by_bagging.r'
     'query_by_committee.r'

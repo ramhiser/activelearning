@@ -1,5 +1,3 @@
-Replace foreach with mclapply
-  - Details?
 Add a function that generates the experimental setup for active learning.
   - Details?
 Start testing with iris data set and figure out the next step

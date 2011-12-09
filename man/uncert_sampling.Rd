@@ -2,8 +2,8 @@
 \alias{uncert_sampling}
 \title{Active Learning with Uncertainty Sampling}
 \usage{
-  uncert_sampling(x, y, uncertainty = "entropy", cl_train,
-    cl_predict, num_query = 1, ...)
+  uncert_sampling(x, y, uncertainty = "entropy", train,
+    predict, num_query = 1, ...)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled
@@ -15,17 +15,16 @@
   \item{uncertainty}{a string that contains the uncertainty
   measure. See above for details.}
 
-  \item{cl_train}{a string that contains the supervised
+  \item{train}{a string that contains the supervised
   classifier's training function's name}
 
-  \item{cl_predict}{a string that contains the supervised
+  \item{predict}{a string that contains the supervised
   classifier's prediction function's name}
 
   \item{num_query}{the number of observations to be be
   queried.}
 
-  \item{...}{additional arguments that are sent to cl_train
-  and cl_predict}
+  \item{...}{additional arguments that are sent to train}
 }
 \value{
   a list that contains the least_certain observation and
@@ -57,28 +56,30 @@
 
   We require a user-specified supervised classifier and its
   corresponding prediction (classification) function. These
-  must be specified as strings in 'cl_train' and
-  'cl_predict', respectively. We assume that the 'cl_train'
-  function accepts two arguments, x and y, as the matrix of
-  feature vectors and their corresponding labels,
-  respectively. The 'cl_predict' function is assumed to
-  accept a trained object as its first argument and a
-  matrix of test observations as its second argument.
-  Furthermore, we assume that 'cl_predict' returns a list
-  that contains a 'posterior' component that is a matrix of
-  the posterior probabilities of class membership; the
-  (i,j)th entry of the matrix must be the posterior
-  probability of the ith observation belong to class j.
+  must be specified as functions in 'train' and 'predict',
+  respectively. We assume that the 'train' function accepts
+  two arguments, x and y, as the matrix of feature vectors
+  and their corresponding labels, respectively. The
+  'predict' function is assumed to accept a trained object
+  as its first argument and a matrix of test observations
+  as its second argument. Furthermore, we assume that
+  'predict' returns a list that contains a 'posterior'
+  component that is a matrix of the posterior probabilities
+  of class membership; the (i,j)th entry of the matrix must
+  be the posterior probability of the ith observation
+  belong to class j. If the 'posterior' component is not
+  available, an error is thrown.
+
   Usually, it is straightforward to implement a wrapper
-  function so that 'cl_train' and 'cl_predict' can be used.
-  Additional arguments to 'cl_train' and 'cl_predict' can
-  be passed via '...'
+  function so that 'train' and 'predict' can be used.
+
+  Additional arguments to 'train' can be passed via '...'.
 
   Unlabeled observations in 'y' are assumed to have NA for
   a label.
 
   It is often convenient to query unlabeled observations in
-  batch. By default, we query the unlabeled observation
+  batch. By default, we query the unlabeled observations
   with the largest uncertainty measure value. With the
   'num_query' the user can specify the number of
   observations to return in batch. If there are ties in the
