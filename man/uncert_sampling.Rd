@@ -15,16 +15,14 @@
   \item{uncertainty}{a string that contains the uncertainty
   measure. See above for details.}
 
-  \item{train}{a string that contains the supervised
+  \item{classifier}{a string that contains the supervised
   classifier as given in the 'caret' package.}
-
-  \item{predict}{a string that contains the supervised
-  classifier's prediction function's name}
 
   \item{num_query}{the number of observations to be be
   queried.}
 
-  \item{...}{additional arguments that are sent to train}
+  \item{...}{additional arguments that are sent to the
+  'caret' classifier.}
 }
 \value{
   a list that contains the least_certain observation and
@@ -55,26 +53,13 @@
   equivalent (they yield the same observation to be
   queried) with binary classification.
 
-  We require a user-specified supervised classifier and its
-  corresponding prediction (classification) function. These
-  must be specified as functions in 'train' and 'predict',
-  respectively. We assume that the 'train' function accepts
-  two arguments, x and y, as the matrix of feature vectors
-  and their corresponding labels, respectively. The
-  'predict' function is assumed to accept a trained object
-  as its first argument and a matrix of test observations
-  as its second argument. Furthermore, we assume that
-  'predict' returns a list that contains a 'posterior'
-  component that is a matrix of the posterior probabilities
-  of class membership; the (i,j)th entry of the matrix must
-  be the posterior probability of the ith observation
-  belong to class j. If the 'posterior' component is not
-  available, an error is thrown.
+  We require a user-specified supervised classifier from
+  the 'caret' R package. Furthermore, we assume that the
+  classifier returns posterior probabilities of class
+  membership; otherwise, an error is thrown. To
 
-  Usually, it is straightforward to implement a wrapper
-  function so that 'train' and 'predict' can be used.
-
-  Additional arguments to 'train' can be passed via '...'.
+  Additional arguments to the specified 'caret' classifier
+  can be passed via '...'.
 
   Unlabeled observations in 'y' are assumed to have NA for
   a label.

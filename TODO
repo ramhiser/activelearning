@@ -7,7 +7,8 @@
   CLOSED: [2011-12-21 Wed 15:10]
 * DONE Implement unit test for uncert_sampling that tests when classifier is not in caret
   CLOSED: [2011-12-21 Wed 15:16]
-* TODO Update documentation in uncert_sampling to describe the usage of 'caret'
+* DONE Update documentation in uncert_sampling to describe the usage of 'caret'
+  CLOSED: [2011-12-21 Wed 15:31]
 * TODO Implement the usage of 'caret' in query_by_bagging
 * TODO Test that query_by_bagging works using iris data set.
 * TODO From above test, implement a unit test for query_by_bagging
@@ -35,3 +36,4 @@ consider naming this the same as the uncertainty or disagreement measure.
 * TODO Implement an example for uncert_sampling
 * TODO Implement an example for query_by_committee
 * TODO Implement an example for query_by_bagging
+* TODO Implement unit test for uncert_sampling that ensures the specified classifier returns posterior probabilities.
