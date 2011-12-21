@@ -1,3 +1,4 @@
 export(activelearning)
 export(query_by_bagging)
 export(query_oracle)
+export(uncert_sampling)

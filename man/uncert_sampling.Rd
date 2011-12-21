@@ -2,8 +2,8 @@
 \alias{uncert_sampling}
 \title{Active Learning with Uncertainty Sampling}
 \usage{
-  uncert_sampling(x, y, uncertainty = "entropy", train,
-    predict, num_query = 1, ...)
+  uncert_sampling(x, y, uncertainty = "entropy",
+    classifier = "lda", num_query = 1, ...)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled
@@ -16,7 +16,7 @@
   measure. See above for details.}
 
   \item{train}{a string that contains the supervised
-  classifier's training function's name}
+  classifier as given in the 'caret' package.}
 
   \item{predict}{a string that contains the supervised
   classifier's prediction function's name}
@@ -39,8 +39,9 @@
 }
 \details{
   The least certainty term is quite general, but we have
-  implemented three of the most widely used methods: 1.
-  least_confidence: query the unlabeled observation with
+  implemented three of the most widely used methods:
+
+  1. least_confidence: query the unlabeled observation with
   the least posterior probability under the trained
   classifier 2. margin: query the unlabeled observation
   that minimizes the difference in the largest two
@@ -50,7 +51,7 @@
   classifier
 
   The 'uncertainty' argument must be one of the three:
-  'entropy' is the default.Note that the three methods are
+  'entropy' is the default. Note that the three methods are
   equivalent (they yield the same observation to be
   queried) with binary classification.
 
@@ -85,5 +86,8 @@
   observations to return in batch. If there are ties in the
   uncertainty measure values, they are broken by the order
   in which the unlabeled observations are given.
+}
+\examples{
+TODO
 }
 

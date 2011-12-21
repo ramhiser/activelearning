@@ -22,6 +22,7 @@ Description: Active learning is a machine learning paradigm
     survey has been provided by Dr. Burr Settles.
 Depends:
     R (>= 2.14),
+    caret,
     entropy,
     mlbench,
     parallel

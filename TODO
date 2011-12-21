@@ -1,6 +1,12 @@
-* TODO Determine how to use a predict function with 'caret' for uncert_sampling
-* TODO Test that uncert_sampling works using iris data set.
-* TODO From above test, implement a unit test for uncert_sampling
+* DONE Determine how to use a predict function with 'caret' for uncert_sampling
+  CLOSED: [2011-12-21 Wed 10:02]
+* DONE Format uncert_sampling code to be less than 80 cols
+  CLOSED: [2011-12-21 Wed 10:24]
+* TODO Implement unit test for uncert_sampling that tests LDA with iris data set.
+* DONE Implement unit test for uncert_sampling that tests when classifier is NULL
+  CLOSED: [2011-12-21 Wed 15:10]
+* DONE Implement unit test for uncert_sampling that tests when classifier is not in caret
+  CLOSED: [2011-12-21 Wed 15:16]
 * TODO Update documentation in uncert_sampling to describe the usage of 'caret'
 * TODO Implement the usage of 'caret' in query_by_bagging
 * TODO Test that query_by_bagging works using iris data set.
@@ -25,3 +31,7 @@ consider naming this the same as the uncertainty or disagreement measure.
 ** Example: If we are considering 'entropy' in uncert_sampling(), then return
 'entropy' as a list component instead of 'obs_uncertainty'
 * TODO Remove ~/projects/active-learning after double-checking that I have the report backed up in this package's /inst/
+* TODO Implement an example for activelearning
+* TODO Implement an example for uncert_sampling
+* TODO Implement an example for query_by_committee
+* TODO Implement an example for query_by_bagging

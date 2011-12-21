@@ -45,43 +45,60 @@
 #' are broken by the order in which the unlabeled observations are given.
 #'
 #' @param x a matrix containing the labeled and unlabeled data
-#' @param y a vector of the labels for each observation in x. Use NA for unlabeled.
-#' @param uncertainty a string that contains the uncertainty measure. See above for details.
-#' @param train a string that contains the supervised classifier as given in the 'caret' package.
-#' @param predict a string that contains the supervised classifier's prediction function's name
+#' @param y a vector of the labels for each observation in x. Use NA for
+#' unlabeled.
+#' @param uncertainty a string that contains the uncertainty measure. See above
+#' for details.
+#' @param train a string that contains the supervised classifier as given in the
+#' 'caret' package.
+#' @param predict a string that contains the supervised classifier's prediction
+#' function's name
 #' @param num_query the number of observations to be be queried.
 #' @param ... additional arguments that are sent to train
-#' @return a list that contains the least_certain observation and miscellaneous results. See above for details.
-uncert_sampling <- function(x, y, uncertainty = "entropy", classifier = "lda", num_query = 1, ...) {
-  caret_lookup <- try(modelLookup(classifier))
+#' @return a list that contains the least_certain observation and miscellaneous
+#' results. See above for details.
+#' @export
+#' @examples
+#' TODO
+uncert_sampling <- function(x, y, uncertainty = "entropy", classifier = "lda",
+                            num_query = 1, ...) {
+
+  # Tests that the specified classifier is given in 'caret', is actually a
+  # classifier, and provides posterior probabilities of class membership.
+  if (is.null(classifier) || is.na(classifier)) {
+    stop("A classifier must be specified")
+  }
+  caret_lookup <- try(modelLookup(classifier), silent = TRUE)
   if (inherits(caret_lookup, "try-error")) {
-    stop("The classifier, '", classifier, "' has not been implemented in the 'caret' package.")
+    stop("Cannot find, '", classifier, "' in the 'caret' package")
   } else if (!any(caret_lookup$forClass)) {
-    stop("The specified method, '", classifier, "' must be a classifier in the 'caret' package.")
+    stop("The method, '", classifier, "' must be a classifier")
+  } else if (!any(caret_lookup$probModel)) {
+    stop("The method, '", classifier, "' must return posterior probabilities")
   }
 
+  # Determines which observations (rows) are unlabeled.
 	unlabeled <- which(is.na(y))
 
-  train_out <- train(x = x[-unlabeled, ], y = y[-unlabeled], ...)
-	posterior <- predict(train_out, x[unlabeled, ])$posterior
-
-  if (is.null(posterior)) {
-    stop("The specified 'predict' function must return a list with a 'posterior' component.")
-  }
-
-	if (is.vector(posterior)) {
-	  posterior <- matrix(posterior, nrow = 1)
-	}
+  # Trains the classifier with caret:::train
+  train_out <- caret:::train(x = x[-unlabeled, ], y = y[-unlabeled],
+                             classifier = classifier, ...)
+  # Extracts the class posterior probabilities for the unlabeled observations.
+	posterior <- predict(train_out, newdata = x[unlabeled, ], type = "prob")
+  posterior <- unname(data.matrix(posterior))
     
+  # Computes the specified uncertainty for each of the unlabeled observations
+  # based on the posterior probabilities of class membership.
   obs_uncertainty <- switch(uncertainty,
                        least_confidence = apply(posterior, 1, max),
-                       margin = apply(posterior, 1, function(obs_post) {
-                         obs_post[order(obs_post, decreasing = T)[1:2]] %*% c(1, -1)
+                       margin = apply(posterior, 1, function(post_i) {
+                         post_i[order(post_i, decreasing = T)[1:2]] %*% c(1, -1)
                        }),
                        entropy = apply(posterior, 1, entropy.plugin)
                      )
   
 	query <- order(obs_uncertainty, decreasing = T)[seq_len(num_query)]
 	
-	list(query = query, obs_uncertainty = obs_uncertainty, posterior = posterior, unlabeled = unlabeled)
+	list(query = query, obs_uncertainty = obs_uncertainty, posterior = posterior,
+       unlabeled = unlabeled)
 }
