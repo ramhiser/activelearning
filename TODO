@@ -1,4 +1,4 @@
-* Build *activelearning* on top of *caret*
+* TODO Build *activelearning* on top of *caret*
 ** Change *train* to *classifier*
 ** Questions:
 *** Is predicted needed?
@@ -6,18 +6,16 @@
 *** Are posterior probabilities and classes both given?
 **** Yes in some cases and no in others?
 **** If the posterior prob is requested and unavailable, what is returned? NULL, error, other?
-* Add a function that generates the experimental setup for active learning.
-** Details?
-* Start testing with iris data set and figure out the next step
-* Determine how to pass arguments from ... to multiple classifiers in query_by_committee
-* Figure out how to work with vignette (i.e. more generally, knitr or Sweave) from emacs and ESS on Linux
-* Iris Data Set
-** Classifiers
-** Consider LDA, QDA, SVM (with RBF), and RF
-***	Do this with 'caret'
+* TODO Add a function that generates the experimental setup for active learning.
+
+Details?
+
+* TODO Test activelearning experiment with the iris data set
+**  Classifiers
+  Consider LDA, QDA, SVM (with RBF), and RF
 ** Oracle Setup
-***	The oracle is infallible.
-***	Query 1 and 5 observations each time until done.
+The oracle is infallible.
+Query 1 and 5 observations each time until done.
 ** Active Learning Methods
 *** Random query
 ***	Uncertainty Sampling with Iris Data Set
@@ -25,14 +23,14 @@
 *** Query by Bagging
 **** Try B = 10, 50, and 100
 *** Query by Committee
-* Move the vignette to ./inst/doc
-** After adding the initial simulation code to the vignette
-* Build the package vignette through R.
+* TODO Run activelearning code with Power Grid data
+* TODO Generate error rate curves as a function of number of labels
+* TODO Build the package vignette through R.
 ** Link: http://www.statistik.lmu.de/~leisch/Sweave/Sweave-Rnews-2003-2.pdf
-* After the query_by_committee setup is determined, update its @examples to reflect the changes.
-* When returning results from the active learning functions, consider the following:
+* TODO After the query_by_committee setup is determined, update its @examples to reflect the changes.
+* TODO When returning results from the active learning functions, consider the following:
 ** Rather than returning the 'obs_uncertainty' or something just as obscure,
 consider naming this the same as the uncertainty or disagreement measure.
 ** Example: If we are considering 'entropy' in uncert_sampling(), then return
 'entropy' as a list component instead of 'obs_uncertainty'
-* Remove ~/projects/active-learning after double-checking that I have the report backed up in this package's /inst/
+* TODO Remove ~/projects/active-learning after double-checking that I have the report backed up in this package's /inst/
