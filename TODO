@@ -1,28 +1,19 @@
-* TODO Build *activelearning* on top of *caret*
-** Change *train* to *classifier*
-** Questions:
-*** Is predicted needed?
-*** Is a committee approach built into *caret*?
-*** Are posterior probabilities and classes both given?
-**** Yes in some cases and no in others?
-**** If the posterior prob is requested and unavailable, what is returned? NULL, error, other?
+* TODO Determine how to use a predict function with 'caret' for uncert_sampling
+* TODO Test that uncert_sampling works using iris data set.
+* TODO From above test, implement a unit test for uncert_sampling
+* TODO Update documentation in uncert_sampling to describe the usage of 'caret'
+* TODO Implement the usage of 'caret' in query_by_bagging
+* TODO Test that query_by_bagging works using iris data set.
+* TODO From above test, implement a unit test for query_by_bagging
+* TODO Update documentation in query_by_bagging to describe the usage of 'caret'
+* TODO Implement the usage of 'caret' in query_by_committee
+* TODO Test that query_by_committee works using iris data set.
+* TODO From above test, implement a unit test for query_by_committee
+* TODO Update documentation in query_by_committee to describe the usage of 'caret'
 * TODO Add a function that generates the experimental setup for active learning.
 
 Details?
 
-* TODO Test activelearning experiment with the iris data set
-**  Classifiers
-  Consider LDA, QDA, SVM (with RBF), and RF
-** Oracle Setup
-The oracle is infallible.
-Query 1 and 5 observations each time until done.
-** Active Learning Methods
-*** Random query
-***	Uncertainty Sampling with Iris Data Set
-**** Use the 3 uncertainty sampling methods
-*** Query by Bagging
-**** Try B = 10, 50, and 100
-*** Query by Committee
 * TODO Run activelearning code with Power Grid data
 * TODO Generate error rate curves as a function of number of labels
 * TODO Build the package vignette through R.

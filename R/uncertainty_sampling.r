@@ -47,14 +47,21 @@
 #' @param x a matrix containing the labeled and unlabeled data
 #' @param y a vector of the labels for each observation in x. Use NA for unlabeled.
 #' @param uncertainty a string that contains the uncertainty measure. See above for details.
-#' @param train a string that contains the supervised classifier's training function's name
+#' @param train a string that contains the supervised classifier as given in the 'caret' package.
 #' @param predict a string that contains the supervised classifier's prediction function's name
 #' @param num_query the number of observations to be be queried.
 #' @param ... additional arguments that are sent to train
 #' @return a list that contains the least_certain observation and miscellaneous results. See above for details.
-uncert_sampling <- function(x, y, uncertainty = "entropy", train, predict, num_query = 1, ...) {
+uncert_sampling <- function(x, y, uncertainty = "entropy", classifier = "lda", num_query = 1, ...) {
+  caret_lookup <- try(modelLookup(classifier))
+  if (inherits(caret_lookup, "try-error")) {
+    stop("The classifier, '", classifier, "' has not been implemented in the 'caret' package.")
+  } else if (!any(caret_lookup$forClass)) {
+    stop("The specified method, '", classifier, "' must be a classifier in the 'caret' package.")
+  }
+
 	unlabeled <- which(is.na(y))
-  
+
   train_out <- train(x = x[-unlabeled, ], y = y[-unlabeled], ...)
 	posterior <- predict(train_out, x[unlabeled, ])$posterior
 
