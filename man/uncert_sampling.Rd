@@ -3,7 +3,7 @@
 \title{Active Learning with Uncertainty Sampling}
 \usage{
   uncert_sampling(x, y, uncertainty = "entropy",
-    classifier = "lda", num_query = 1, ...)
+    classifier, num_query = 1, ...)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled
@@ -56,7 +56,10 @@
   We require a user-specified supervised classifier from
   the 'caret' R package. Furthermore, we assume that the
   classifier returns posterior probabilities of class
-  membership; otherwise, an error is thrown. To
+  membership; otherwise, an error is thrown. To obtain a
+  list of valid classifiers, see the 'caret' vignettes,
+  which are available on CRAN. Also, see the 'modelLookup'
+  function in the 'caret' package.
 
   Additional arguments to the specified 'caret' classifier
   can be passed via '...'.

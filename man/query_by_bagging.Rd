@@ -2,8 +2,8 @@
 \alias{query_by_bagging}
 \title{Active learning with "Query by Bagging"}
 \usage{
-  query_by_bagging(x, y, disagreement = "kullback", train,
-    predict, num_query = 1, C = 50, num_cores = 1, ...)
+  query_by_bagging(x, y, disagreement = "kullback",
+    classifier, num_query = 1, C = 50, num_cores = 1, ...)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled
@@ -16,17 +16,16 @@
   disagreement measure among the committee members. See
   above for details.}
 
-  \item{train}{a function to train a classifier}
-
-  \item{predict}{a function to predict (classify)
-  observations}
+  \item{classifier}{a string that contains the supervised
+  classifier as given in the 'caret' package.}
 
   \item{num_query}{the number of observations to be be
   queried.}
 
   \item{C}{the number of bootstrap committee members}
 
-  \item{...}{additional arguments that are passed to train}
+  \item{...}{additional arguments that are sent to the
+  'caret' classifier.}
 }
 \value{
   a list that contains the least_certain observation and
@@ -47,7 +46,7 @@
   training data. With the QBC approach, the user specifies
   a comittee with C supervised classifiers that are each
   trained on the labeled training data. Also, note that we
-  we have implemented QBC as query_by_committee.
+  have implemented QBC as query_by_committee.
 
   To determine maximum disagreement among bagged committe
   members, we have implemented three approaches: 1.
@@ -58,36 +57,27 @@
   of all committee members 3. kullback: query the unlabeled
   observation that maximizes the Kullback-Leibler
   divergence between the label distributions of any one
-  committe member and the consensus. The 'disagreement'
-  argument must be one of the three: 'kullback' is the
-  default.
+  committe member and the consensus.
+
+  The 'disagreement' argument must be one of the three:
+  'kullback' is the default.
 
   To calculate the committee disagreement, we use the
-  formulae from Dr. Burr Settles' "Active Learning
-  Literature Survey" available on his website. At the time
-  this function was coded, the literature survey had last
-  been updated on January 26, 2010.
+  formulae from Dr. Burr Settles' excellent "Active
+  Learning Literature Survey" available on his website. At
+  the time this function was coded, the literature survey
+  had last been updated on January 26, 2010.
 
-  We require a user-specified supervised classifier and its
-  corresponding prediction (classification) function. These
-  must be specified as functions in 'train' and 'predict',
-  respectively. We assume that the 'train' function accepts
-  two arguments, x and y, as the matrix of feature vectors
-  and their corresponding labels, respectively. The
-  'predict' function is assumed to accept a trained object
-  as its first argument and a matrix of test observations
-  as its second argument. Furthermore, we assume that
-  'predict' returns a list that contains a 'posterior'
-  component that is a matrix of the posterior probabilities
-  of class membership; the (i,j)th entry of the matrix must
-  be the posterior probability of the ith observation
-  belong to class j. If the 'posterior' component is not
-  available when required, an error is thrown.
+  We require a user-specified supervised classifier from
+  the 'caret' R package. Furthermore, we assume that the
+  classifier returns posterior probabilities of class
+  membership; otherwise, an error is thrown. To obtain a
+  list of valid classifiers, see the 'caret' vignettes,
+  which are available on CRAN. Also, see the 'modelLookup'
+  function in the 'caret' package.
 
-  Usually, it is straightforward to implement a wrapper
-  function so that 'train' and 'predict' can be used.
-
-  Additional arguments to 'train' can be passed via '...'.
+  Additional arguments to the specified 'caret' classifier
+  can be passed via '...'.
 
   Unlabeled observations in 'y' are assumed to have NA for
   a label.

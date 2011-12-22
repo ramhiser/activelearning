@@ -21,7 +21,9 @@
 #'
 #' We require a user-specified supervised classifier from the 'caret' R package.
 #' Furthermore, we assume that the classifier returns posterior probabilities of
-#' class membership; otherwise, an error is thrown. To 
+#' class membership; otherwise, an error is thrown. To obtain a list of valid
+#' classifiers, see the 'caret' vignettes, which are available on CRAN. Also,
+#' see the 'modelLookup' function in the 'caret' package.
 #'
 #' Additional arguments to the specified 'caret' classifier can be passed via
 #' '...'.
@@ -48,7 +50,7 @@
 #' @export
 #' @examples
 #' TODO
-uncert_sampling <- function(x, y, uncertainty = "entropy", classifier = "lda",
+uncert_sampling <- function(x, y, uncertainty = "entropy", classifier,
                             num_query = 1, ...) {
 
   # Tests that the specified classifier is given in 'caret', is actually a
@@ -84,7 +86,7 @@ uncert_sampling <- function(x, y, uncertainty = "entropy", classifier = "lda",
                        }),
                        entropy = apply(posterior, 1, entropy.plugin)
                      )
-  
+  # Determines the order of the unlabeled observations by uncertainty measure.
 	query <- order(obs_uncertainty, decreasing = T)[seq_len(num_query)]
 	
 	list(query = query, obs_uncertainty = obs_uncertainty, posterior = posterior,

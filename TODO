@@ -9,31 +9,37 @@
   CLOSED: [2011-12-21 Wed 15:16]
 * DONE Update documentation in uncert_sampling to describe the usage of 'caret'
   CLOSED: [2011-12-21 Wed 15:31]
-* TODO Implement the usage of 'caret' in query_by_bagging
-* TODO Test that query_by_bagging works using iris data set.
-* TODO From above test, implement a unit test for query_by_bagging
-* TODO Update documentation in query_by_bagging to describe the usage of 'caret'
+* DONE Implement the usage of 'caret' in query_by_bagging
+  CLOSED: [2011-12-21 Wed 18:27]
+* DONE Format query_by_bagging code to be less than 80 cols
+  CLOSED: [2011-12-21 Wed 17:20]
+* TODO Implement unit test for query_by_bagging that tests LDA with iris data set.
+* TODO Implement unit test for query_by_bagging that tests when classifier is NULL
+* TODO Implement unit test for query_by_bagging that tests when classifier is not in caret
+* DONE Update documentation in query_by_bagging to describe the usage of 'caret'
+  CLOSED: [2011-12-21 Wed 18:30]
 * TODO Implement the usage of 'caret' in query_by_committee
-* TODO Test that query_by_committee works using iris data set.
-* TODO From above test, implement a unit test for query_by_committee
+* TODO Format query_by_committee code to be less than 80 cols
+* TODO Implement unit test for query_by_committee that tests LDA with iris data set.
+* TODO Implement unit test for query_by_committee that tests when classifier is NULL
+* TODO Implement unit test for query_by_committee that tests when classifier is not in caret
 * TODO Update documentation in query_by_committee to describe the usage of 'caret'
 * TODO Add a function that generates the experimental setup for active learning.
-
-Details?
-
-* TODO Run activelearning code with Power Grid data
-* TODO Generate error rate curves as a function of number of labels
 * TODO Build the package vignette through R.
 ** Link: http://www.statistik.lmu.de/~leisch/Sweave/Sweave-Rnews-2003-2.pdf
-* TODO After the query_by_committee setup is determined, update its @examples to reflect the changes.
 * TODO When returning results from the active learning functions, consider the following:
 ** Rather than returning the 'obs_uncertainty' or something just as obscure,
 consider naming this the same as the uncertainty or disagreement measure.
 ** Example: If we are considering 'entropy' in uncert_sampling(), then return
 'entropy' as a list component instead of 'obs_uncertainty'
-* TODO Remove ~/projects/active-learning after double-checking that I have the report backed up in this package's /inst/
+* TODO Remove ~/projects/active-learning after double-checking that I have the report backed up in this package's /inst/ :pnnl:
 * TODO Implement an example for activelearning
 * TODO Implement an example for uncert_sampling
 * TODO Implement an example for query_by_committee
 * TODO Implement an example for query_by_bagging
 * TODO Implement unit test for uncert_sampling that ensures the specified classifier returns posterior probabilities.
+* TODO Implement a function that checks if the 'caret' options are specified correctly.
+This function should essentially be a copy-paste of the first few error-checking lines
+in uncert_sampling. This code will be used in all activelearning methods that are built
+on top of caret. Because I have several active learning methods planned, it is important
+to have only one copy of this code.
