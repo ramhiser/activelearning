@@ -3,7 +3,7 @@
 \title{Active Learning in R}
 \usage{
   activelearning(x = NULL, y, y_truth = NULL, method,
-    num_query = 1, num_cores = 1, ...)
+    classifier, num_query = 1, num_cores = 1, ...)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled
@@ -14,14 +14,20 @@
   \item{y}{a vector of the labels for each observation in
   x. Use NA for unlabeled.}
 
-  \item{uncertainty}{a string that contains the uncertainty
-  measure. See above for details.}
+  \item{method}{a string that contains the active learning
+  method to be used.}
 
-  \item{num_query}{the number of observations to be be
+  \item{classifier}{a string that contains the supervised
+  classifier as given in the 'caret' package.}
+
+  \item{num_query}{the number of observations to be
   queried.}
 
+  \item{num_cores}{the number of CPU cores to use in
+  parallel processing}
+
   \item{...}{additional arguments sent to the chosen active
-  learning method}
+  learning method and classifier.}
 }
 \value{
   a list that contains the least_certain observation and
@@ -29,5 +35,8 @@
 }
 \description{
   TODO
+}
+\examples{
+TODO
 }
 

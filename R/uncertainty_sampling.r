@@ -43,7 +43,7 @@
 #' for details.
 #' @param classifier a string that contains the supervised classifier as given in
 #' the 'caret' package.
-#' @param num_query the number of observations to be be queried.
+#' @param num_query the number of observations to be queried.
 #' @param ... additional arguments that are sent to the 'caret' classifier.
 #' @return a list that contains the least_certain observation and miscellaneous
 #' results. See above for details.
@@ -67,12 +67,15 @@ uncert_sampling <- function(x, y, uncertainty = "entropy", classifier,
     stop("The method, '", classifier, "' must return posterior probabilities")
   }
 
-  # Determines which observations (rows) are unlabeled.
-	unlabeled <- which(is.na(y))
+  # Determines which observations (rows) are labeled.
+	labeled <- which_labeled(y, logical = TRUE)
+  unlabeled <- which_unlabeled(y)
 
   # Trains the classifier with caret:::train
-  train_out <- caret:::train(x = x[-unlabeled, ], y = y[-unlabeled],
+  train_out <- caret:::train(x = subset(train_x, labeled),
+                             y = subset(train_y, labeled),
                              classifier = classifier, ...)
+
   # Extracts the class posterior probabilities for the unlabeled observations.
 	posterior <- predict(train_out, newdata = x[unlabeled, ], type = "prob")
   posterior <- unname(data.matrix(posterior))

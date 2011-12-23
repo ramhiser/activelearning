@@ -31,7 +31,11 @@
 #' @return a list that contains the least_certain observation and miscellaneous
 #' results. See above for details.
 random_query <- function(y, num_query = 1) {
-	unlabeled <- which(is.na(y))
-	query <- sample(unlabeled, num_query)
+	unlabeled <- which_unlabeled(y)
+  if (length(unlabeled) <= 1 || length(unlabeled) <= num_query) {
+    query <- unlabeled
+  } else {
+    query <- sample(unlabeled, num_query)
+  }
 	list(query = query, unlabeled = unlabeled)
 }

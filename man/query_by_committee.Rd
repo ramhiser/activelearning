@@ -20,7 +20,7 @@
   disagreement measure among the committee members. See
   above for details.}
 
-  \item{num_query}{the number of observations to be be
+  \item{num_query}{the number of observations to be
   queried.}
 }
 \value{

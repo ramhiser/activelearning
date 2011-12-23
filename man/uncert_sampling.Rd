@@ -18,7 +18,7 @@
   \item{classifier}{a string that contains the supervised
   classifier as given in the 'caret' package.}
 
-  \item{num_query}{the number of observations to be be
+  \item{num_query}{the number of observations to be
   queried.}
 
   \item{...}{additional arguments that are sent to the

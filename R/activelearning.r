@@ -2,16 +2,22 @@
 #'
 #' TODO
 #'
-#' @export
 #' @param x a matrix containing the labeled and unlabeled data. By default, 'x'
 #' is NULL for the case that 'method' is "random." If 'x' is NULL, and the
 #' 'method' is something other than "random," an error will be thrown.
 #' @param y a vector of the labels for each observation in x. Use NA for unlabeled.
-#' @param uncertainty a string that contains the uncertainty measure. See above for details.
-#' @param num_query the number of observations to be be queried.
-#' @param ... additional arguments sent to the chosen active learning method
+#' @param method a string that contains the active learning method to be used.
+#' @param classifier a string that contains the supervised classifier as given in
+#' the 'caret' package.
+#' @param num_query the number of observations to be queried.
+#' @param num_cores the number of CPU cores to use in parallel processing
+#' @param ... additional arguments sent to the chosen active learning method and classifier.
 #' @return a list that contains the least_certain observation and miscellaneous results. See above for details.
-activelearning <- function(x = NULL, y, y_truth = NULL, method, num_query = 1, num_cores = 1, ...) {
+#' @export
+#' @examples
+#' TODO
+activelearning <- function(x = NULL, y, y_truth = NULL, method, classifier,
+                           num_query = 1, num_cores = 1, ...) {
   methods <- c("random", "uncertainty", "qbb", "qbc")
   stopifnot(method %in% c("random", "uncertainty", "qbb", "qbc"))
 
@@ -20,7 +26,7 @@ activelearning <- function(x = NULL, y, y_truth = NULL, method, num_query = 1, n
   }
   
   method_out <- switch(method,
-    random = random_query(x = x, y = y, num_query = num_query),
+    random = random_query(y = y, num_query = num_query),
     uncertainty = uncert_sampling(x = x, y = y, num_query = num_query, ...),
     qbb = query_by_bagging(x = x, y = y, num_query = num_query, num_cores = num_cores, ...),
     qbc = query_by_committee(x = x, y = y, num_query = num_query, num_cores = num_cores, ...)

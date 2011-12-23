@@ -34,3 +34,5 @@ Collate:
     'random_query.r'
     'oracle.r'
     'activelearning.r'
+    'activelearning_sim.r'
+    'helpers.r'

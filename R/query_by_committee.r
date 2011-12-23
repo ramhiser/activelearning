@@ -60,7 +60,7 @@
 #' @param y a vector of the labels for each observation in x. Use NA for unlabeled.
 #' @param committee a list containing the committee of classifiers. See details for the required format.
 #' @param disagreement a string that contains the disagreement measure among the committee members. See above for details.
-#' @param num_query the number of observations to be be queried.
+#' @param num_query the number of observations to be queried.
 #' @return a list that contains the least_certain observation and miscellaneous results. See above for details.
 #' @examples
 #' lda_wrapper <- function(x, y, ...) { rda(x = x, grouping = y, ...) }
@@ -73,7 +73,7 @@
 #'    RDA_auto = list(train = rda_wrapper, predict = predict)
 #' )
 query_by_committee <- function(x, y, committee, disagreement = "kullback", num_query = 1, num_cores = 1, ...) {
-	unlabeled <- which(is.na(y))
+	unlabeled <- which_unlabeled(y)
 	n <- length(y) - length(unlabeled)
   
   train_x <- x[-unlabeled, ]

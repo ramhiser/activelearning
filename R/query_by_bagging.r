@@ -56,7 +56,7 @@
 #' committee members. See above for details.
 #' @param classifier a string that contains the supervised classifier as given in
 #' the 'caret' package.
-#' @param num_query the number of observations to be be queried.
+#' @param num_query the number of observations to be queried.
 #' @param C the number of bootstrap committee members
 #' @param ... additional arguments that are sent to the 'caret' classifier.
 #' @return a list that contains the least_certain observation and miscellaneous
@@ -77,11 +77,13 @@ query_by_bagging <- function(x, y, disagreement = "kullback", classifier,
     stop("The method, '", classifier, "' must be a classifier")
   }
 
-  # Determines which observations (rows) are unlabeled
-	unlabeled <- which(is.na(y))
-  train_x <- x[-unlabeled, ]
-  train_y <- y[-unlabeled]
-  test_x <- x[unlabeled, ]
+  # Determines which observations (rows) are labeled.
+	labeled <- which_labeled(y, logical = TRUE)
+  unlabeled <- which_unlabeled(y)
+
+  train_x <- subset(x, labeled)
+  train_y <- subset(y, labeled)
+  test_x <- subset(x, !labeled)
 	n <- nrow(train_x)
 
   # Constructs a list of resampled indices from the labeled data.
