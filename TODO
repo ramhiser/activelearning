@@ -5,6 +5,7 @@
 Warning message:
 In `[<-.factor`(`*tmp*`, list, value = c(3L, 1L, 3L, 1L, 1L, 3L,  :
   number of items to replace is not a multiple of replacement length
+* TODO After a few tests, add NEWS with what's been added, upgrade version to 0.1 and merge with main branch.
 * TODO Implement unit test for uncert_sampling that tests LDA with iris data set.
 * TODO Implement unit test for query_by_bagging that tests LDA with iris data set.
 * TODO Implement unit test for query_by_bagging that tests when classifier is NULL
