@@ -32,7 +32,7 @@
 activelearning <- function(x = NULL, y, y_truth = NULL,
                            method = c("random", "uncertainty", "qbb", "qbc"),
                            classifier, num_query = 1, num_cores = 1, ...) {
-  methods <- match.arg(methods)
+  method <- match.arg(method)
 
   if (is.null(x) && method != "random") {
     stop("The matrix 'x' cannot be NULL for the method, ", method)
