@@ -74,9 +74,10 @@
 #' @examples
 #' x <- iris[, -5]
 #' y <- iris[, 5]
-#' activelearning_sim(x = x, y = y, method = "random", classifier = "lda")
+#' activelearning_sim(x = x, y = y, method = "random", classifier = "lda",
+#'                    num_labels = 5, num_query = 3)
 #' activelearning_sim(x = x, y = y, method = "uncertainty", classifier = "qda",
-#'                    num_labels = 10)
+#'                    num_labels = 10, num_query = 5)
 activelearning_sim <- function(x, y, method, classifier, num_query = 1,
                                training = NULL, train_pct = 2/3, labeled = NULL,
                                num_labels = 2, all_results = FALSE,
@@ -102,11 +103,11 @@ activelearning_sim <- function(x, y, method, classifier, num_query = 1,
   # simulation.
   if (is.null(labeled)) {
     labeled <- tapply(seq_along(train_y), train_y, sample, size = num_labels)
-    labeled <- do.call(c, labeled)
+    labeled <- as.vector(do.call(c, labeled))
   }
 
   # Determines which observations are unlabeled to begin the simulation.
-  y_unlabeled <- replace(train_y, labeled, NA)
+  y_unlabeled <- replace(train_y, -labeled, NA)
   unlabeled <- which_unlabeled(y_unlabeled)
   num_unlabeled <- length(unlabeled)
 
@@ -126,29 +127,29 @@ activelearning_sim <- function(x, y, method, classifier, num_query = 1,
   for (i in seq_along(seq_num_query)) {
     # Constructs a string that specifies the name of the elements in the current
     # iteration of results.
-    iter_string <- paste("Iteration", i, sep = "")
+    iter_string <- paste0("Iteration", i)
     l_results[[iter_string]] <- list()
 
     # Determines which observations to query via active learning.
-    al_out <- activelearning(x = x, y = y_unlabeled, train_y = train_y,
-                             method = method, classifier = classifier,
-                             num_cores = num_cores, ...)
+    al_out <- activelearning(x = train_x, y = y_unlabeled, method = method,
+                             classifier = classifier, num_cores = num_cores,
+                             ...)
 
     # Queries the oracle for the labels of the selected unlabeled observations.
     query <- al_out$query
     oracle_out <- query_oracle(query, train_y)
 
     # Updates the unlabeled observations with the labels from the oracle.
-    y_unlabeled <- replace(y_unlabeled, query, train_y)
+    y_unlabeled <- replace(y_unlabeled, query, oracle_out)
 
     # Determines which observations are labeled after the oracle is queried.
-	  labeled <- which_labeled(y, logical = TRUE)
-    unlabeled <- which_unlabeled(y)
+	  labeled <- which_labeled(y_unlabeled, return_logical = TRUE)
+    unlabeled <- which_unlabeled(y_unlabeled)
 
     # Trains the classifier with caret:::train
-    train_out <- caret:::train(x = subset(train_x, labeled),
-                               y = subset(train_y, labeled),
-                               classifier = classifier, ...)
+    train_out <- train(x = subset(train_x, labeled),
+                       y = subset(train_y, labeled),
+                       method = classifier, ...)
 
     # Classifies the test data set with the constructed classifier.
     test_predictions <- predict(train_out, newdata = test_x)

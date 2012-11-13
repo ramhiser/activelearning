@@ -1,43 +1,11 @@
-* TODO Fix error when running the basic LDA/iris example in activelearning_sim.
-> x <- iris[, -5]
-> y <- iris[, 5]
-> al_out <- activelearning_sim(x = x, y = y, method = "random", classifier = "lda")
-Warning message:
-In `[<-.factor`(`*tmp*`, list, value = c(3L, 1L, 3L, 1L, 1L, 3L,  :
-  number of items to replace is not a multiple of replacement length
-* TODO After a few tests, add NEWS with what's been added, upgrade version to 0.1 and merge with main branch.
-* TODO Implement unit test for uncert_sampling that tests LDA with iris data set.
-* TODO Implement unit test for query_by_bagging that tests LDA with iris data set.
-* TODO Implement unit test for query_by_bagging that tests when classifier is NULL
-* TODO Implement unit test for query_by_bagging that tests when classifier is not in caret
-* TODO Implement the usage of 'caret' in query_by_committee
-* TODO Format query_by_committee code to be less than 80 cols
-* TODO Implement unit test for query_by_committee that tests LDA with iris data set.
-* TODO Implement unit test for query_by_committee that tests when classifier is NULL
-* TODO Implement unit test for query_by_committee that tests when classifier is not in caret
-* TODO Update documentation in query_by_committee to describe the usage of 'caret'
-* TODO Build the package vignette through R.
-** Link: http://www.statistik.lmu.de/~leisch/Sweave/Sweave-Rnews-2003-2.pdf
-* TODO When returning results from the active learning functions, consider the following:
-** Rather than returning the 'obs_uncertainty' or something just as obscure,
-consider naming this the same as the uncertainty or disagreement measure.
-** Example: If we are considering 'entropy' in uncert_sampling(), then return
-'entropy' as a list component instead of 'obs_uncertainty'
-* TODO Remove ~/projects/active-learning after double-checking that I have the report backed up in this package's /inst/ :pnnl:
-* TODO Implement an example for activelearning
-* TODO Implement an example for uncert_sampling
-* TODO Implement an example for query_by_committee
-* TODO Implement an example for query_by_bagging
-* TODO Implement unit test for uncert_sampling that ensures the specified classifier returns posterior probabilities.
-* TODO Implement a function that checks if the 'caret' options are specified correctly.
+* Implement a function that checks if the 'caret' options are specified correctly.
 This function should essentially be a copy-paste of the first few error-checking lines
 in uncert_sampling. This code will be used in all activelearning methods that are built
 on top of caret. Because I have several active learning methods planned, it is important
 to have only one copy of this code.
-* TODO Add the option to query a noisy oracle in activelearning_sim
-* TODO Add option to activelearning_sim to specify the number of labeled in each class in a vector.
-For example, the iris data set has 3 classes. The user may specify num_labels = c(3, 6, 8).
-But if the num_labels is an integer, the number of labels should be the same for each class.
-* TODO Update the activelearning_sim documentation to specify the number of labeled in each class in a vector.
-* TODO Add error check to activelearning to ensure that nrow(x) = length(y)
-* TODO Update activelearning_sim documentation so that the 'Details' is more independent of the first paragraph.
+* Update activelearning documentation
+* Update activelearning_sim documentation so that the 'Details' is more independent of the first paragraph.
+* Implement the usage of 'caret' in query_by_committee
+* Implement an example for query_by_committee
+* Update documentation in query_by_committee to describe the usage of 'caret'
+* After a few tests, add NEWS with what's been added, upgrade version to 0.1 and merge with main branch.

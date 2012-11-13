@@ -117,8 +117,9 @@
 \examples{
 x <- iris[, -5]
 y <- iris[, 5]
-activelearning_sim(x = x, y = y, method = "random", classifier = "lda")
+activelearning_sim(x = x, y = y, method = "random", classifier = "lda",
+                   num_labels = 5, num_query = 3)
 activelearning_sim(x = x, y = y, method = "uncertainty", classifier = "qda",
-                   num_labels = 10)
+                   num_labels = 10, num_query = 5)
 }
 

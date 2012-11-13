@@ -1,7 +1,7 @@
 Package: activelearning
 Title: A Collection of Active Learning Methods in R
-Version: 0.0.1
-Date: 2011-09-27
+Version: 0.1
+Date: 2012-11-11
 Author: John A. Ramey
 Maintainer: John A. Ramey <johnramey@gmail.com>
 Description: Active learning is a machine learning paradigm
@@ -21,18 +21,18 @@ Description: Active learning is a machine learning paradigm
     to specify custom classifiers. An excellent literature
     survey has been provided by Dr. Burr Settles.
 Depends:
-    R (>= 2.14),
+    R (>= 2.15),
     caret,
     entropy,
     mlbench,
     parallel
 License: MIT
 Collate:
-    'query_by_bagging.r'
-    'query_by_committee.r'
-    'uncertainty_sampling.r'
     'random_query.r'
     'oracle.r'
     'activelearning.r'
-    'activelearning_sim.r'
     'helpers.r'
+    'activelearning-sim.r'
+    'query-by-bagging.r'
+    'query-by-committee.r'
+    'uncertainty-sampling.r'

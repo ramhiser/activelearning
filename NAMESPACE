@@ -1,5 +1,5 @@
-export(activelearning_sim)
 export(activelearning)
+export(activelearning_sim)
 export(query_by_bagging)
 export(query_oracle)
-export(uncert_sampling)
+export(uncertainty_sampling)

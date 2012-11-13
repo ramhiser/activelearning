@@ -9,62 +9,74 @@
 #' Note that this approach is similar to "Query by Committee" (QBC), but each
 #' committee member uses the same classifier trained on a resampled subset of
 #' the labeled training data. With the QBC approach, the user specifies a
-#' comittee with C supervised classifiers that are each trained on the labeled
-#' training data. Also, note that we have implemented QBC as query_by_committee.
+#' comittee with \code{C} supervised classifiers that are each trained on the
+#' labeled training data. Also, note that we have implemented QBC as
+#' \code{\link{query_by_committee}}.
 #'
-#' To determine maximum disagreement among bagged committe members, we have
+#' To determine maximum disagreement among bagged committee members, we have
 #' implemented three approaches:
-#' 1. vote_entropy: query the unlabeled observation that maximizes the vote
-#' entropy among all commitee members
-#' 2. post_entropy: query the unlabeled observation that maximizes the entropy
-#' of average posterior probabilities of all committee members
-#' 3. kullback: query the unlabeled observation that maximizes the
-#' Kullback-Leibler divergence between the
-#' label distributions of any one committe member and the consensus.
+#' \describe{
+#' \item{kullback}{query the unlabeled observation that maximizes the
+#' Kullback-Leibler divergence between the label distributions of any one
+#' committe member and the consensus}
+#' \item{vote_entropy}{query the unlabeled observation that maximizes the vote
+#' entropy among all commitee members}
+#' \item{post_entropy}{query the unlabeled observation that maximizes the entropy
+#' of average posterior probabilities of all committee members}
+#' }
 #'
-#' The 'disagreement' argument must be one of the three: 'kullback' is the
-#' default.
+#' The \code{disagreement} argument must be one of the three: \code{kullback} is
+#' the default.
 #'
 #' To calculate the committee disagreement, we use the formulae from Dr. Burr
 #' Settles' excellent "Active Learning Literature Survey" available on his
 #' website. At the time this function was coded, the literature survey had last
 #' been updated on January 26, 2010.
 #'
-#' We require a user-specified supervised classifier from the 'caret' R package.
-#' Furthermore, we assume that the classifier returns posterior probabilities of
-#' class membership; otherwise, an error is thrown. To obtain a list of valid
-#' classifiers, see the 'caret' vignettes, which are available on CRAN. Also,
-#' see the 'modelLookup' function in the 'caret' package.
+#' We require a user-specified supervised classifier from the \code{\link{caret}}
+#' R package. Furthermore, we assume that the classifier returns posterior
+#' probabilities of class membership; otherwise, an error is thrown. To obtain a
+#' list of valid classifiers, see the \code{\link{caret}} vignettes, which are
+#' available on CRAN. Also, see the \code{\link{modelLookup}} function in the
+#' \code{\link{caret}} package.
 #'
-#' Additional arguments to the specified 'caret' classifier can be passed via
-#' '...'.
+#' Additional arguments to the specified \code{\link{caret}} classifier can be
+#' passed via \code{...}.
 #' 
-#' Unlabeled observations in 'y' are assumed to have NA for a label.
+#' Unlabeled observations in \code{y} are assumed to have \code{NA} for a label.
 #'
 #' It is often convenient to query unlabeled observations in batch. By default,
 #' we query the unlabeled observations with the largest uncertainty measure
-#' value. With the 'num_query' the user can specify the number of observations
-#' to return in batch. If there are ties in the uncertainty measure values, they
-#' are broken by the order in which the unlabeled observations are given.
+#' value. With the \code{num_query} the user can specify the number of
+#' observations to return in batch. If there are ties in the uncertainty measure
+#' values, they are broken by the order in which the unlabeled observations are
+#' given.
 #'
-#' We use the 'parallel' package to perform the bagging in parallel.
+#' We use the \code{\link{parallel}} package to perform the bagging in parallel.
 #'
 #' @param x a matrix containing the labeled and unlabeled data
-#' @param y a vector of the labels for each observation in x.
-#' Use NA for unlabeled.
+#' @param y a vector of the labels for each observation in \code{x}. Use
+#' \code{NA} for unlabeled observations.
 #' @param disagreement a string that contains the disagreement measure among the
 #' committee members. See above for details.
 #' @param classifier a string that contains the supervised classifier as given in
-#' the 'caret' package.
+#' the \code{\link{caret}} package.
 #' @param num_query the number of observations to be queried.
 #' @param C the number of bootstrap committee members
-#' @param ... additional arguments that are sent to the 'caret' classifier.
+#' @param ... additional arguments that are sent to the \code{\link{caret}}
+#' classifier.
 #' @return a list that contains the least_certain observation and miscellaneous
 #' results. See above for details.
 #' @export
-query_by_bagging <- function(x, y, disagreement = "kullback", classifier,
-                             num_query = 1, C = 50, num_cores = 1, ...) {
-
+#' @examples
+#' x <- iris[, -5]
+#' y <- iris[, 5]
+#' query_by_bagging(x = x, y = y, classifier = "lda")
+#' query_by_bagging(x = x, y = y, disagreement = "vote_entropy",
+#'                     classifier = "qda", num_query = 5)
+query_by_bagging <- function(x, y, disagreement = c("kullback", "vote_entropy",
+                             "post_entropy"), classifier, num_query = 1, C = 50,
+                             num_cores = 1, ...) {
   # Tests that the specified classifier is given in 'caret', is actually a
   # classifier, and provides posterior probabilities of class membership.
   if (is.null(classifier) || is.na(classifier)) {
@@ -88,7 +100,7 @@ query_by_bagging <- function(x, y, disagreement = "kullback", classifier,
 
   # Constructs a list of resampled indices from the labeled data.
   # Each list member is a 'committee' member.
-  l_labeled_obs <- caret:::createResample(train_y, times = C, list = TRUE)
+  l_labeled_obs <- createResample(train_y, times = C, list = TRUE)
 
 	# For each 'committee' member, we build a classifier from the labeled data
   # and predict each of the unlabeled data. The vote entropy method is
@@ -102,6 +114,8 @@ query_by_bagging <- function(x, y, disagreement = "kullback", classifier,
       stop("The method, '", classifier, "' must return posterior probabilities")
     }
   }
+  # TODO: Rather than manually applying parallel processing, let 'caret' do it
+  # using its built-in mechanisms.
   bagged_out <- mclapply(l_labeled_obs, function(obs) {
     train_out <- train(x = train_x[obs, ], y = train_y[obs], ...)
     predict(train_out, test_x, type = predict_type)
@@ -134,8 +148,9 @@ query_by_bagging <- function(x, y, disagreement = "kullback", classifier,
                      )
 
   # Determines the order of the unlabeled observations by disagreement measure.
-	query <- order(disagree, decreasing = T)[seq_len(num_query)]
+	query <- order(disagree, decreasing = TRUE)[seq_len(num_query)]
 	
-	list(query = query, obs_disagreement = disagree, bagged_out = bagged_out,
-       unlabeled = unlabeled)
+	out_list <- list(query = query, bagged_out = bagged_out, unlabeled = unlabeled)
+  out_list[[uncertainty]] <- disagree
+  out_list
 }

@@ -3,15 +3,15 @@
 \title{Active learning with "Query by Committee"}
 \usage{
   query_by_committee(x, y, committee,
-    disagreement = "kullback", num_query = 1,
-    num_cores = 1, ...)
+    disagreement = c("kullback", "vote_entropy", "post_entropy"),
+    num_query = 1, num_cores = 1, ...)
 }
 \arguments{
   \item{x}{a matrix containing the labeled and unlabeled
   data}
 
   \item{y}{a vector of the labels for each observation in
-  x. Use NA for unlabeled.}
+  \code{x}. Use \code{NA} for unlabeled.}
 
   \item{committee}{a list containing the committee of
   classifiers. See details for the required format.}
@@ -29,10 +29,11 @@
 }
 \description{
   The 'query by committee' approach to active learning
-  uitilizes a committee of C classifiers that are each
-  trained on the labeled training data. Our goal is to
+  uitilizes a committee of \code{C} classifiers that are
+  each trained on the labeled training data. Our goal is to
   "query the oracle" with the observations that have the
-  maximum disagreement among the C trained classifiers.
+  maximum disagreement among the \code{C} trained
+  classifiers.
 }
 \details{
   Note that this approach is similar to "Query by Bagging"
@@ -41,22 +42,23 @@
   classifier is specified by the user, and each committee
   member is trained on a resampled subset of the labeled
   training data. Also, note that we have implemented QBB as
-  query_by_bagging.
+  \code{\link{query_by_bagging}}.
 
   To determine maximum disagreement among committee
   committe members, we have implemented three approaches:
 
-  1. vote_entropy: query the unlabeled observation that
-  maximizes the vote entropy among all commitee members 2.
-  post_entropy: query the unlabeled observation that
-  maximizes the entropy of average posterior probabilities
-  of all committee members 3. kullback: query the unlabeled
-  observation that maximizes the Kullback-Leibler
-  divergence between the label distributions of any one
-  committe member and the consensus.
+  \describe{ \item{vote_entropy}{query the unlabeled
+  observation that maximizes the vote entropy among all
+  commitee members} \item{post_entropy}{query the unlabeled
+  observation that maximizes the entropy of average
+  posterior probabilities of all committee members}
+  \item{kullback}{query the unlabeled observation that
+  maximizes the Kullback-Leibler divergence between the
+  label distributions of any one committe member and the
+  consensus}.
 
-  The 'disagreement' argument must be one of the three:
-  'kullback' is the default.
+  The \code{disagreement} argument must be one of the
+  three: \code{kullback} is the default.
 
   To calculate the committee disagreement, we use the
   formulae from Dr. Burr Settles' "Active Learning
@@ -69,48 +71,49 @@
   corresponding to each supervised classifier (each
   committee member). Each component in the list 'committee'
   should be a list with the following named elements:
-
-  train: a string that specifies the function name of the
-  supervised classifier (optional) train_args: a list that
-  specifies additional arguments to pass to the 'train'
-  function predict: a string that specifies the
+  \describe{ \item{train}{a string that specifies the
+  function name of the supervised classifier}
+  \item{train_args}{(optional) a list that specifies
+  additional arguments to pass to the \code{train}
+  function} \item{predict}{a string that specifies the
   classifier's corresponding prediction (classification)
-  function
+  function}
 
   In the examples below, we provide an example here that
   uses the linear discriminant analysis (LDA)
-  implementation in the MASS package as well as the
-  regularized discriminant analysis (RDA) implementation in
-  the klaR package. Each training function arguments 'x'
-  for the data matrix and 'grouping' as the vector of class
-  labels. Furthermore, the RDA classifier accepts two
-  optional tuning parameters, lambda and gamma. If the
+  implementation in the \code{\link{MASS}} package as well
+  as the regularized discriminant analysis (RDA)
+  implementation in the \code{klaR} package. Each training
+  function arguments \code{x} for the data matrix and
+  \code{grouping} as the vector of class labels.
+  Furthermore, the RDA classifier accepts two optional
+  tuning parameters, \code{lambda} and \code{gamma}. If the
   models are not provided they are estimated automatically.
   In our example, we consider using both the RDA model with
   and without user-specified tuning parameters. Note that
-  both the LDA and RDA classifiers use 'predict' as their
-  classification functions. The specified 'committee' can
-  be formulated by:
+  both the LDA and RDA classifiers use \code{predict} as
+  their classification functions. The specified
+  \code{committee} can be formulated by:
 
-  Unlabeled observations in 'y' are assumed to have NA for
-  a label.
+  Unlabeled observations in \code{y} are assumed to have
+  \code{NA} for a label.
 
   It is often convenient to query unlabeled observations in
   batch. By default, we query the unlabeled observation
   with the largest disagreement measure value. With the
-  'num_query' the user can specify the number of
+  \code{num_query} the user can specify the number of
   observations to return in batch. If there are ties in the
   disagreement measure values, they are broken by the order
   in which the unlabeled observations are given.
 
-  This method uses the 'foreach' package and is set to do
-  the train each committee member in parallel if a parallel
-  backend is registered. If there is no parallel backend
-  registered, a warning is thrown, but everything will work
-  just fine.
+  This method uses the \code{\link{foreach}} package and is
+  set to do the train each committee member in parallel if
+  a parallel backend is registered. If there is no parallel
+  backend registered, a warning is thrown, but everything
+  will work just fine.
 }
 \examples{
-lda_wrapper <- function(x, y, ...) { rda(x = x, grouping = y, ...) }
+lda_wrapper <- function(x, y, ...) { lda(x = x, grouping = y, ...) }
 rda_wrapper <- function(x, y, ...) { rda(x = x, grouping = y, ...) }
 rda_args <- list(lambda = 1, gamma = 0.1)
 
