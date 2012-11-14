@@ -1,9 +1,12 @@
+\docType{package}
 \name{activelearning}
 \alias{activelearning}
-\title{Active Learning in R}
+\alias{activelearning-package}
+\alias{package-activelearning}
+\title{A Collection of Active Learning Methods in R}
 \usage{
   activelearning(x = NULL, y, y_truth = NULL,
-    method = c("random", "uncertainty", "qbb", "qbc"),
+    method = c("uncertainty", "qbb", "qbc", "random"),
     classifier, num_query = 1, num_cores = 1, ...)
 }
 \arguments{
@@ -20,7 +23,8 @@
   classification labels of the observations in \code{x}. By
   default, this vector is \code{NULL} as this vector may
   not be unavailable in a realistic situation. This vector
-  is useful in empirical comparisons.}
+  is useful for comparing empirically classifiers and/or
+  active-learning methods.}
 
   \item{method}{a string that contains the active learning
   method to be used.}
@@ -42,7 +46,50 @@
   miscellaneous results. See above for details.
 }
 \description{
-  TODO
+  Active learning is a machine learning paradigm for
+  optimally choosing unlabeled observations in a training
+  data set to query for their true labels. The framework is
+  particularly useful when there are very few labeled
+  observations relative to a large number of unlabeled
+  observations, and the user seeks to determine as few true
+  labels as possible to achieve highly accurate
+  classifiers. This package is a collection of various
+  active learning methods from the literature to optimally
+  query observations with respect to a variety of objective
+  functions. Some active learning methods require posterior
+  probability estimates of the unlabeled observations from
+  a single classifier or a committee of classifiers; this
+  package allows the user to specify custom classifiers. An
+  excellent literature survey has been provided by Dr. Burr
+  Settles.
+
+  This function acts as a front-end wrapper function to
+  apply one of several active-learning methods to select
+  optimally unlabeled observations in a training data set
+  to query their true labels from a gold-standard source.
+  The active-learning framework is particularly useful when
+  there are very few labeled observations relative to a
+  large number of unlabeled observations, and the user
+  seeks to determine as few true labels as possible to
+  achieve highly accurate classifiers.
+}
+\details{
+  We have implemented several active-learning methods that
+  can be specified via the \code{method} argument. These
+  methods include:
+
+  \describe{ \item{uncertainty}{Uncertainty sampling}
+  \item{qbb}{Query-by-bagging}
+  \item{qbc}{Query-by-committee} \item{random}{Random
+  selection} }
+
+  By default, uncertainty sampling is applied.
+
+  For more details about the active-learning methods above,
+  see \url{http://github.com/ramey/activelearning} and
+  \url{http://www.cs.cmu.edu/~bsettles/pub/settles.activelearning.pdf}.
+  The latter is an excellent literature survey from Burr
+  Settles.
 }
 \examples{
 x <- iris[, -5]
