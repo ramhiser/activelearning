@@ -94,6 +94,9 @@ query_by_committee <- function(x, y, committee,
                                  "post_entropy"), num_query = 1, num_cores = 1,
                                ...) {
   warning("The 'query_by_committee' function is experimental.")
+  # Validates the classifier string.
+  validate_classifier(classifier, posterior_prob = TRUE)
+
 	unlabeled <- which_unlabeled(y)
 	n <- length(y) - length(unlabeled)
   

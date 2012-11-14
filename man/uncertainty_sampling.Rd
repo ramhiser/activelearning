@@ -16,13 +16,13 @@
   measure. See above for details.}
 
   \item{classifier}{a string that contains the supervised
-  classifier as given in the 'caret' package.}
+  classifier as given in the \code{caret} package.}
 
   \item{num_query}{the number of observations to be
   queried.}
 
   \item{...}{additional arguments that are sent to the
-  'caret' classifier.}
+  \code{caret} classifier.}
 }
 \value{
   a list that contains the least_certain observation and

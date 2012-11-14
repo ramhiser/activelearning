@@ -46,9 +46,9 @@
 #' @param uncertainty a string that contains the uncertainty measure. See above
 #' for details.
 #' @param classifier a string that contains the supervised classifier as given in
-#' the 'caret' package.
+#' the \code{caret} package.
 #' @param num_query the number of observations to be queried.
-#' @param ... additional arguments that are sent to the 'caret' classifier.
+#' @param ... additional arguments that are sent to the \code{caret} classifier.
 #' @return a list that contains the least_certain observation and miscellaneous
 #' results. See above for details.
 #' @export
@@ -61,20 +61,9 @@
 uncertainty_sampling <- function(x, y, uncertainty = "entropy", classifier,
                                  num_query = 1, ...) {
 
-  # Tests that the specified classifier is given in 'caret', is actually a
-  # classifier, and provides posterior probabilities of class membership.
-  if (is.null(classifier) || is.na(classifier)) {
-    stop("A classifier must be specified")
-  }
-  caret_lookup <- try(modelLookup(classifier), silent = TRUE)
-  if (inherits(caret_lookup, "try-error")) {
-    stop("Cannot find, '", classifier, "' in the 'caret' package")
-  } else if (!any(caret_lookup$forClass)) {
-    stop("The method, '", classifier, "' must be a classifier")
-  } else if (!any(caret_lookup$probModel)) {
-    stop("The method, '", classifier, "' must return posterior probabilities")
-  }
-
+  # Validates the classifier string.
+  validate_classifier(classifier, posterior_prob = TRUE)
+  
   # Determines which observations (rows) are labeled.
 	labeled <- which_labeled(y, return_logical = TRUE)
   unlabeled <- which_unlabeled(y)

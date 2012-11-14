@@ -77,17 +77,8 @@
 query_by_bagging <- function(x, y, disagreement = c("kullback", "vote_entropy",
                              "post_entropy"), classifier, num_query = 1, C = 50,
                              num_cores = 1, ...) {
-  # Tests that the specified classifier is given in 'caret', is actually a
-  # classifier, and provides posterior probabilities of class membership.
-  if (is.null(classifier) || is.na(classifier)) {
-    stop("A classifier must be specified")
-  }
-  caret_lookup <- try(modelLookup(classifier), silent = TRUE)
-  if (inherits(caret_lookup, "try-error")) {
-    stop("Cannot find, '", classifier, "' in the 'caret' package")
-  } else if (!any(caret_lookup$forClass)) {
-    stop("The method, '", classifier, "' must be a classifier")
-  }
+  # Validates the classifier string.
+  validate_classifier(classifier)
 
   # Determines which observations (rows) are labeled.
 	labeled <- which_labeled(y, logical = TRUE)
