@@ -54,37 +54,31 @@
   for each simulation iteration.
 }
 \description{
-  For a given data set, we may be interested in how well a
-  specified active learning method performs (in terms of
-  classification accuracy) for a given classifier.
-  Furthermore, we may be interested in the impact of the
-  number of oracle queries on the classification accuracy.
-  To simulate the performance of a active learning method
-  on a data set, we first partition the data into a
-  training and test data set. The user may specify the
-  observation indices (rows) to use as training data, or
-  the user can specify a percentage of the observations
-  that will be retained as training data, while the
-  remaining data are utilized as test data. By default, the
-  training percentage is 2/3.
+  For a given data set, this function simulates the
+  classification performance of a specified active learning
+  method for a given classifier. Furthermore, this
+  simulation is useful to investigate training sample size
+  on classification accuracy.
 }
 \details{
-  Then, from the training data we randomly select at least
-  2 observations from each class to label; the remainder of
-  the observations are kept unlabeled. Classifiers are
-  constructed from the labeled data, and the unlabeled data
-  are ignored in this process. With the specified active
-  learning method, we aim to label a subset of the
-  unlabeled data by determining the unlabeled observations
-  that empirically optimize the active learning method's
-  objective function. The labels for the queried unlabeled
-  observations are selected from the true labels that are
-  provided in 'y'. This querying approach emulates an
-  oracle that provides the true class label for an
-  observation for which we do not know its true label.
-  Notice that we are querying a flawless oracle, which
-  might not be realistic. For example, if the oracle is a
-  human, the human might be wrong occasionally.
+  To simulate the performance of a active learning method
+  on a data set, we partition the data into a training and
+  test data set. From the training data we randomly select
+  at least 2 observations from each class to label; the
+  remainder of the observations are kept unlabeled.
+  Classifiers are constructed from the labeled data, and
+  the unlabeled data are ignored in this process. With the
+  specified active learning method, we aim to label a
+  subset of the unlabeled data by determining the unlabeled
+  observations that empirically optimize the active
+  learning method's objective function. The labels for the
+  queried unlabeled observations are selected from the true
+  labels that are provided in \code{y}. This querying
+  approach emulates an oracle that provides the true class
+  label for an observation for which we do not know its
+  true label. Notice that we are querying a flawless
+  oracle, which might be unrealistic. For example, if the
+  oracle is a human, the human might be wrong occasionally.
 
   Next, we apply the following steps until no training
   observations are unlabeled:
@@ -102,6 +96,12 @@
   If the number of unlabeled observations decreases below
   the specified number of unlabeled observations to query,
   we only query the unlabeled observations.
+
+  The user may specify the observation indices (rows) to
+  use as training data, or the user can specify a
+  percentage of the observations that will be retained as
+  training data, while the remaining data are utilized as
+  test data. By default, the training percentage is 2/3.
 
   Keep in mind that for many classifiers if the number of
   observations is small relative to the number of features,
