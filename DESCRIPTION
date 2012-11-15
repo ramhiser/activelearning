@@ -1,7 +1,7 @@
 Package: activelearning
 Title: A Collection of Active Learning Methods in R
 Version: 0.1
-Date: 2012-11-12
+Date: 2012-11-14
 Author: John A. Ramey
 Maintainer: John A. Ramey <johnramey@gmail.com>
 Description: Active learning is a machine learning paradigm

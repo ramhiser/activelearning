@@ -1,10 +1,10 @@
 #' Active learning with "Query by Bagging"
 #'
 #' The 'query by bagging' approach to active learning applies bootstrap
-#' aggregating (bagging) by randomly sampling with replacement B times from the
-#' training data to create a committe of B classifiers. Our goal is to "query
-#' the oracle" with the observations that have the maximum disagreement among the
-#' B trained classifiers.
+#' aggregating (bagging) by randomly sampling with replacement \code{C} times
+#' from the training data to create a committe of B classifiers. Our goal is to
+#' "query the oracle" with the observations that have the maximum disagreement
+#' among the \code{C} trained classifiers.
 #'
 #' Note that this approach is similar to "Query by Committee" (QBC), but each
 #' committee member uses the same classifier trained on a resampled subset of

@@ -1,0 +1,62 @@
+activelearning 0.1
+-------------
+
+NEW FEATURES
+
+* First version of the `activelearning` package. With this package, we aim to
+  provide tools for the machine-learning paradigm, active learning. Specifically,
+  this package is a collection of various active-learning methods from the
+  literature for choosing unlabeled observations in a data set to query for their
+  true labels. The framework is particularly useful when there are very few
+  labeled observations relative to a large number of unlabeled observations, and
+  the user seeks to determine as few true labels as possible to achieve highly
+  accurate classifiers.  
+
+ACTIVE LEARNING METHODS
+
+* `activelearning()` is a wrapper function that applies our implementation of one
+  of several active-learning methods to select observations that should be
+  labeled to improve classification performance based on the current data set.
+
+* `uncertainty_sampling()` determines the least certain unlabeled observations,
+  which are selected to query for their true classification labels. The user must
+  specify a classifier from the 'caret' R package to train a classifier from the
+  observations that are already labeled. The trained classifier is then applied
+  to the unlabeled observations to determine the least certain ones. We provide
+  several methods to estimate the certainty of each observation. By default, the
+  entropy of the posterior probabilities of classification is used.
+
+* `query_by_bagging()` is an active-learning method that applies a classifier
+  from the 'caret' package to a data set using the bagging paradigm by training
+  a specified classifier using 'C' randomly sampled data sets. The unlabeled
+  observations that have the maximum disagreement among the 'C' trained
+  classifiers are to be queried. We provide several measures of disagreement.
+  By default, the Kullback-Leibler divergence between the label distributions
+  of any one committee member and the consensus of the 'C' classifiers is used.
+
+* `query_by_committee()` is an active-learning method similar to
+  `query_by_bagging()`. Rather than applying a bagging method using the same
+  classifier to 'C' randomly sampled data sets, a committee of 'C' different
+  classification methods is used.
+
+* `random_query()` is a function to query unlabeled observations at random.
+  Random querying is often used as a baseline to which proposed active-learning
+  methods are compared.
+
+ACTIVE LEARNING SIMULATION
+
+* `activelearning_sim()` is a function that simulates the classification
+  performance of a specified active-learning method for a given classifier (or
+  classifiers) using a given data set. The simulation function is useful to
+  investigate empirical classification performance of various active-learning
+  methods as well as the effect of various training sample sizes.
+
+MISCELLANEOUS
+
+* `validate_classifier()` is a helper function that validates a classifier
+  specified from the 'caret' package.
+
+* `query_oracle()` is a helper function that reports the true classification for
+  a set of unlabeled observations, if known. This is useful for simulation
+  studies.
+

@@ -1,6 +1,6 @@
 #' Automatic query of an oracle.
 #'
-#' This function emulates a subject matter expert reporting the true classification for a set of observations.
+#' This function reports the true classification for a set of observations.
 #'
 #' @export
 #' @param i a vector of the queried observation indices

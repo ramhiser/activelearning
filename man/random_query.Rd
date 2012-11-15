@@ -5,8 +5,9 @@
   random_query(y, num_query = 1)
 }
 \arguments{
-  \item{y}{a vector of the labels for each observation in
-  x. Use NA for unlabeled.}
+  \item{y}{a vector of the classification labels for each
+  observation in a data set. Use \code{NA} for unlabeled
+  observations.}
 
   \item{num_query}{the number of observations to be be
   queried.}
@@ -45,11 +46,11 @@
 
   This function provides the baseline random querying. We
   only require the vector of labels for each observation.
-  Unlabeled observations in 'y' are assumed to have NA for
-  a label.
+  Unlabeled observations in \code{y} are assumed to have
+  \code{NA} for a label.
 
   It is often convenient to query unlabeled observations in
-  batch. With the 'num_query' the user can specify the
+  batch. With the \code{num_query} the user can specify the
   number of observations to return in batch.
 }
 
