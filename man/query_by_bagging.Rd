@@ -99,6 +99,10 @@
 \examples{
 x <- iris[, -5]
 y <- iris[, 5]
+
+# For demonstration, suppose that few observations are labeled in 'y'.
+y <- replace(y, -c(1:10, 51:60, 101:110), NA)
+
 query_by_bagging(x = x, y = y, classifier = "lda")
 query_by_bagging(x = x, y = y, disagreement = "vote_entropy",
                     classifier = "qda", num_query = 5)

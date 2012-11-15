@@ -15,13 +15,14 @@
 #' implemented three approaches:
 #'
 #' \describe{
+#' \item{kullback}{query the unlabeled observation that maximizes the
+#' Kullback-Leibler divergence between the label distributions of any one
+#' committe member and the consensus}
 #' \item{vote_entropy}{query the unlabeled observation that maximizes the vote
 #' entropy among all commitee members}
 #' \item{post_entropy}{query the unlabeled observation that maximizes the entropy
 #' of average posterior probabilities of all committee members}
-#' \item{kullback}{query the unlabeled observation that maximizes the
-#' Kullback-Leibler divergence between the label distributions of any one
-#' committe member and the consensus}.
+#' }
 #'
 #' The \code{disagreement} argument must be one of the three: \code{kullback} is
 #' the default.
@@ -31,29 +32,10 @@
 #' At the time this function was coded, the literature survey had last been
 #' updated on January 26, 2010.
 #'
-#' In specifying the committee members, we require a list (called 'committee'
-#' in the arguments) with elements corresponding to each supervised classifier
-#' (each committee member). Each component in the list 'committee' should be a
-#' list with the following named elements:
-#' \describe{
-#' \item{train}{a string that specifies the function name of the supervised
-#' classifier}
-#' \item{train_args}{(optional) a list that specifies additional arguments to
-#' pass to the \code{train} function}
-#' \item{predict}{a string that specifies the classifier's corresponding
-#' prediction (classification) function}
-#'
-#' In the examples below, we provide an example here that uses the linear
-#' discriminant analysis (LDA) implementation in the \code{\link{MASS}} package
-#' as well as the regularized discriminant analysis (RDA) implementation in the
-#' \code{klaR} package. Each training function arguments \code{x} for the data
-#' matrix and \code{grouping} as the vector of class labels. Furthermore, the RDA
-#' classifier accepts two optional tuning parameters, \code{lambda} and
-#' \code{gamma}. If the models are not provided they are estimated automatically.
-#' In our example, we consider using both the RDA model with and without
-#' user-specified tuning parameters. Note that both the LDA and RDA classifiers
-#' use \code{predict} as their classification functions. The specified
-#' \code{committee} can be formulated by:
+#' To specify the committee members, we require a character vector of classifiers
+#' in the \code{committee} argument with elements corresponding to each
+#' supervised classifier (each committee member). The classifiers must match the
+#' naming in the \code{caret} package.
 #'
 #' Unlabeled observations in \code{y} are assumed to have \code{NA} for a label.
 #'
@@ -64,11 +46,7 @@
 #' values, they are broken by the order in which the unlabeled observations are
 #' given.
 #'
-#' This method uses the \code{\link{foreach}} package and is set to do the train
-#' each committee member in parallel if a parallel backend is registered. If
-#' there is no parallel backend registered, a warning is thrown, but everything
-#' will work just fine.
-#'
+#' @export
 #' @param x a matrix containing the labeled and unlabeled data
 #' @param y a vector of the labels for each observation in \code{x}. Use
 #' \code{NA} for unlabeled.
@@ -80,22 +58,24 @@
 #' @return a list that contains the least_certain observation and miscellaneous
 #' results. See above for details.
 #' @examples
-#' lda_wrapper <- function(x, y, ...) { lda(x = x, grouping = y, ...) }
-#' rda_wrapper <- function(x, y, ...) { rda(x = x, grouping = y, ...) }
-#' rda_args <- list(lambda = 1, gamma = 0.1)
+#' x <- iris[, -5]
+#' y <- iris[, 5]
 #'
-#' committee <- list(
-#'    LDA = list(train = lda_wrapper, predict = predict),
-#'    RDA = list(train = rda_wrapper, train_args = rda_args, predict = predict),
-#'    RDA_auto = list(train = rda_wrapper, predict = predict)
-#' )
+#' # For demonstration, suppose that few observations are labeled in 'y'.
+#' y <- replace(y, -c(1:12, 51:62, 101:112), NA)
+#'
+#' committee <- c("lda", "qda", "rda")
+#' query_by_committee(x = x, y = y, committee = committee, num_query = 3)$query
+#' query_by_committee(x = x, y = y, committee = committee,
+#'                    disagreement = "post_entropy", num_query = 5)$query
 query_by_committee <- function(x, y, committee,
                                disagreement = c("kullback", "vote_entropy",
                                  "post_entropy"), num_query = 1, num_cores = 1,
                                ...) {
-  warning("The 'query_by_committee' function is experimental.")
   # Validates the classifier string.
-  validate_classifier(classifier, posterior_prob = TRUE)
+  dev_null <- lapply(committee, validate_classifier, posterior_prob = TRUE)
+
+  disagreement <- match.arg(disagreement)
 
 	unlabeled <- which_unlabeled(y)
 	n <- length(y) - length(unlabeled)
@@ -104,52 +84,46 @@ query_by_committee <- function(x, y, committee,
   train_y <- y[-unlabeled]
   test_x <- x[unlabeled, ]
 
-	# Committee predictions
-	committee_pred <- mclapply(committee, function(c_member) {
-	  predict <- get(c_member$predict)
-	  args_string <- with(c_member, paste(names(train_args), train_args$train_args,
-                                        sep = "=", collapse = ", "))
-	  args_string <- paste0('x = train_x, y = train_y, ', args_string)
-    function_call <- paste0(c_member$train, "(", args_string, ")")
-    train_out <- eval(parse(text = function_call))
-		predict(train_out, test_x)
-	})
-	
-	committee_post <- lapply(committee_pred, function(x) {
-    x$posterior
-  })
-	committee_class <- do.call(rbind, lapply(committee_pred, function(x) x$class))
+	# Trains each classifier in the committee with the 'caret' implementation.
+  committee_fits <- mclapply(committee, function(classifier) {
+    train(x = train_x, y = train_y, method = classifier)
+  }, mc.cores = num_cores)
 
-	disagree <- switch(uncertainty,
-                     vote_entropy = apply(committee_class, 2, function(x) {
-                       entropy.empirical(table(factor(x, levels = classes)))
+  # Classifies the unlabeled observations with each committee member and also
+  # determines their posterior probabilities.
+	committee_class <- predict(committee_fits, test_x)
+  committee_class <- do.call(cbind, lapply(committee_class, as.character))
+
+	committee_post <- predict(committee_fits, test_x, type = "prob")
+  
+	disagree <- switch(disagreement,
+                     vote_entropy = apply(committee_class, 1, function(x) {
+                       entropy(table(factor(x, levels = levels(y))))
                      }),
                      post_entropy = {
-                       committee_post <- lapply(committee_pred, function(x) {
-                         x$posterior
-                        })
                        avg_post <- Reduce('+', committee_post)
                        avg_post <- avg_post / length(committee_post)
                        apply(avg_post, 1, function(obs_post) {
-                         entropy.plugin(obs_post)
+                         entropy(obs_post)
                        })
                      },
                      kullback = {
-                       committee_post <- lapply(committee_pred, function(x) {
-                         x$posterior
-                       })
                        consensus_prob <- Reduce('+', committee_post)
                        consensus_prob <- consensus_prob / length(committee_post)
                        kl_post_by_member <- lapply(committee_post, function(x) {
-                         rowSums(x * log(x / consensus_prob))
+                         # NOTE: This is equivalent to:
+                         # rowSums(x * log(x / consensus_prob))
+                         # The identity improves numerical stability.
+                         rowSums(log(exp(x) + x / consensus_prob))
                        })
                        Reduce('+', kl_post_by_member) / length(kl_post_by_member)
                      }
                     )
 
-  query <- order(obs_disagreement, decreasing = TRUE)[seq_len(num_query)]
+  query <- order(disagree, decreasing = TRUE)[seq_len(num_query)]
 	
-	list(query = query, obs_disagreement = obs_disagreement,
-       committee_class = committee_class, committee_post = committee_post,
-       unlabeled = unlabeled)
+	out_list <- list(query = query, committee_class = committee_class,
+                   committee_post = committee_post, unlabeled = unlabeled)
+  out_list[[disagreement]] <- disagree
+  out_list
 }

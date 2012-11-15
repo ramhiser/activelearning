@@ -71,6 +71,10 @@
 #' @examples
 #' x <- iris[, -5]
 #' y <- iris[, 5]
+#'
+#' # For demonstration, suppose that few observations are labeled in 'y'.
+#' y <- replace(y, -c(1:10, 51:60, 101:110), NA)
+#'
 #' query_by_bagging(x = x, y = y, classifier = "lda")
 #' query_by_bagging(x = x, y = y, disagreement = "vote_entropy",
 #'                     classifier = "qda", num_query = 5)
@@ -108,14 +112,15 @@ query_by_bagging <- function(x, y, disagreement = c("kullback", "vote_entropy",
   # TODO: Rather than manually applying parallel processing, let 'caret' do it
   # using its built-in mechanisms.
   bagged_out <- mclapply(l_labeled_obs, function(obs) {
-    train_out <- train(x = train_x[obs, ], y = train_y[obs], ...)
+    train_out <- train(x = train_x[obs, ], y = train_y[obs], method = classifier,
+                       ...)
     predict(train_out, test_x, type = predict_type)
   }, mc.cores = num_cores)
 	
   # Computes the disagreement measure for each of the unlabeled observations
   # based on the either the predicted class labes or the posterior probailities
   # of class membership.
-	disagree <- switch(uncertainty,
+	disagree <- switch(disagreement,
                      vote_entropy = {
                        bagged_out <- do.call(rbind, bagged_out)
                        apply(bagged_out, 2, function(x) {
@@ -142,6 +147,6 @@ query_by_bagging <- function(x, y, disagreement = c("kullback", "vote_entropy",
 	query <- order(disagree, decreasing = TRUE)[seq_len(num_query)]
 	
 	out_list <- list(query = query, bagged_out = bagged_out, unlabeled = unlabeled)
-  out_list[[uncertainty]] <- disagree
+  out_list[[disagreement]] <- disagree
   out_list
 }

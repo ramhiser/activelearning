@@ -69,6 +69,10 @@ NULL
 #' @examples
 #' x <- iris[, -5]
 #' y <- iris[, 5]
+#'
+#' # For demonstration, suppose that few observations are labeled in 'y'.
+#' y <- replace(y, -c(1:10, 51:60, 101:110), NA)
+#'
 #' activelearning(x = x, y = y, method = "random", classifier = "lda",
 #'               num_query = 3)
 #' activelearning(x = x, y = y, method = "uncertainty", classifier = "qda",
