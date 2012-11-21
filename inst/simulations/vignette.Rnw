@@ -1,6 +1,14 @@
-\documentclass[article]{jss}
+\documentclass[12pt]{article}
+\usepackage{graphicx, amsmath, amssymb, bm, url, mathtools, natbib, amsthm, multirow}
 
-\usepackage{graphicx, amsmath, amssymb, bm}
+\bibpunct{(}{)}{;}{a}{,}{,}
+
+% The following package allows for doublespacing
+\usepackage{setspace}
+
+\setlength{\oddsidemargin}{0 in} % odd page left margin
+\setlength{\evensidemargin}{0 in} % even page left margin
+\setlength{\textwidth}{6 in}    % width of text
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% declarations for jss.cls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -8,22 +16,25 @@
 
 %% almost as usual
 \author{John A. Ramey\\Fred Hutchinson Cancer Research Center, Baylor University}
-% TODO Need to update the subtitle.
-\title{\pkg{activelearning}: An \proglang{R} Package for Querying Unlabeled Observations with Active Learning}
+\title{\pkg{activelearning}: An \proglang{R} Package for Optimally Labeling Unlabeled Data for Classification with Active Learning}
 
+% TODO: Uncomment these commands in the JSS version of the article.
 %% for pretty printing and a nice hypersummary also set:
-\Plainauthor{John A. Ramey} %% comma-separated
-\Plaintitle{activelearning: An R Package for Optimally Querying Unlabeled Observations for Classification} %% without formatting
-\Shorttitle{Active Learning in R with activelearning} %% a short title (if necessary)
+%\Plainauthor{John A. Ramey} %% comma-separated
+%\Plaintitle{activelearning: An R Package for Optimally Querying Unlabeled Observations for Classification} %% without formatting
+%\Shorttitle{Active Learning in R with activelearning} %% a short title (if necessary)
 
-%% an abstract and keywords
-\Abstract{
-  In this document, I provide an overview of \textbf{active learning}, the common approaches, and provide a guide to my implementations of these methods using my recently developed {\tt R} package, \pkg{activelearning} . 
-}
-\Keywords{active learning, classification, \proglang{R}}
-\Plainkeywords{active learning, classification, R} %% without formatting
+
+% TODO: Remove these commands in the JSS version of the article.
+\newcommand{\proglang}[1]{{\tt #1}}
+\newcommand{\pkg}[1]{{\tt #1}}
+
+% TODO: Uncomment these commands in the JSS version of the article.
+%\Keywords{active learning, classification, \proglang{R}}
+%\Plainkeywords{active learning, classification, R} %% without formatting
 %% at least one keyword must be supplied
 
+% TODO: Uncomment these commands in the JSS version of the article.
 %% publication information
 %% NOTE: Typically, this can be left commented and will be filled out by the technical editor
 %% \Volume{13}
@@ -33,16 +44,17 @@
 %% \Submitdate{2004-09-29}
 %% \Acceptdate{2004-09-29}
 
+% TODO: Uncomment these commands in the JSS version of the article.
 %% The address of (at least) one author should be given
 %% in the following format:
-\Address{
-  John A. Ramey\\
-  Vaccine and Infectious Disease Division\\
-  Fred Hutchinson Cancer Research Center\\
-  1100 Fairview Ave. N., M2-C200\\
-  Seattle, WA 98109\\
-  E-mail: \email{johnramey@gmail.com}
-}
+%\Address{
+%  John A. Ramey\\
+%  Vaccine and Infectious Disease Division\\
+%  Fred Hutchinson Cancer Research Center\\
+%  1100 Fairview Ave. N., M2-C200\\
+%  Seattle, WA 98109\\
+%  E-mail: \email{johnramey@gmail.com}
+%}
 
 %% for those who use Sweave please include the following line (with % symbols):
 %% need no \usepackage{Sweave.sty}
@@ -51,9 +63,14 @@
 
 \begin{document}
 
-%\doublespacing
+\doublespacing
 
 \maketitle
+
+%% an abstract and keywords
+\abstract{
+  In this document, I provide an overview of \textbf{active learning}, the common approaches, and provide a guide to my implementations of these methods using my recently developed {\tt R} package, \pkg{activelearning} . 
+}
 
 \section{Introduction}
 
@@ -152,13 +169,13 @@ The application of active learning to time series models should not be ignored b
 Additionally, it may not be advisable to query an instance in time to categorize it because if a user is presented with a set of events that occurred at, say 9:47:23 PM PST, the oracle may have no grasp of the exact event at the specific time. But if the oracle was presented instead with a range of times, say 9:30 PM to 10:00 PM and a summary of the events over that time period, then the user may be able to provide detailed information. This also may be useful if a couple of observations within the time window are atypical; the user may be able to label specific observations within the window, especially because they may differ greatly with the other observations. This approach may be feasible with [multiple instance active learning][3], which essentially approaches the active learning problem hierarchically so that a number of observations may be labeled (the labeling might be considered soft in that it is subject to change) if they are similar enough to the specific instance that was queried or a summary of a set of similar observations.
 
 
-[1]: http://www.cs.cmu.edu/~bsettles/pub/settles.activelearning.pdf\\
-[2]: https://www.mturk.com/mturk/welcome\\
-[3]: http://www.cs.cmu.edu/~bsettles/pub/settles.nips08.pdf \\
-[4]: http://www.cs.cmu.edu/~bsettles/pub/settles.jmlrwcp11.pdf\\
-[5]: http://www.cs.cmu.edu/~bsettles/\\
-[6]: http://www.cs.cmu.edu/~bsettles/pub/settles.thesis.pdf\\
-[7]: http://www.cs.umass.edu/~culotta/pubs/culotta05reducing.pdf
+%[1]: http://www.cs.cmu.edu/~bsettles/pub/settles.activelearning.pdf\\
+%[2]: https://www.mturk.com/mturk/welcome\\
+%[3]: http://www.cs.cmu.edu/~bsettles/pub/settles.nips08.pdf \\
+%[4]: http://www.cs.cmu.edu/~bsettles/pub/settles.jmlrwcp11.pdf\\
+%[5]: http://www.cs.cmu.edu/~bsettles/\\
+%[6]: http://www.cs.cmu.edu/~bsettles/pub/settles.thesis.pdf\\
+%[7]: http://www.cs.umass.edu/~culotta/pubs/culotta05reducing.pdf
 
 \end{document} 
 
