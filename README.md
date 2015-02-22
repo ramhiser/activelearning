@@ -29,5 +29,5 @@ If you prefer to download the latest version, instead type:
 
 ```r
 library(devtools)
-install_github('activelearning', 'ramey')
+devtools::install_github('ramhiser/activelearning')
 ```
