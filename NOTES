@@ -1,4 +1,4 @@
-2011-10-31 | 17:41 | Outline for Tomorrow's Meeting with Brett A. and Tom F.
+2011-10-31 | 17:41 | Overview of Active Learning
 
 [activelearning, discussion]
 
@@ -38,7 +38,9 @@ The typical approaches to active learning are simple. Do one of the following:
 		unlabeled observations gets small with respect to the number of features,
 		the similarity estimate will become quite biased.
 
-From a theoretical standpoint, a large emphasis has been placed on the number of observations that need to be labeled to attain a specified classification error rate, similar to sample size determination studies.
+From a theoretical standpoint, a large emphasis has been placed on the number of
+observations that need to be labeled to attain a specified classification error
+rate, similar to sample size determination studies.
 	- This largely ignores a lot of what occurs in practice.
 		- Assumes IID.
 		- Essentially, assumes infallible source of posterior prob. estimates.
@@ -53,9 +55,19 @@ From a theoretical standpoint, a large emphasis has been placed on the number of
 		no optimal classifier overall. That is, there are data sets for which
 		randomly classifying will be superior to a given classifier.
 
-When beginning with no labeled observations, it is often difficult to get started to actually start doing well. Suppose that we know that there are 5 classes. As a minimal requirement, each class will need 2-3 observations before a classifier for that class can be constructed. Assuming we are able to find those 2-3 observations up front, that will require 10-15 observations to be randomly chosen. In this base case, the bias of the classifiers will be quite large in that its parameters will be biased, especially for a large sample size. Hence, the probability estimates for any unlabeled observation should be used with caution.
+When beginning with no labeled observations, it is often difficult to get
+started to actually start doing well. Suppose that we know that there are 5
+classes. As a minimal requirement, each class will need 2-3 observations before
+a classifier for that class can be constructed. Assuming we are able to find
+those 2-3 observations up front, that will require 10-15 observations to be
+randomly chosen. In this base case, the bias of the classifiers will be quite
+large in that its parameters will be biased, especially for a large sample
+size. Hence, the probability estimates for any unlabeled observation should be
+used with caution.
 
-For data with a moderately large number of features, the sample size for each class needs to be large as well to obtain 'stable' classifications. However, intuitively, once we reach stability, active learning may not be as valuable.
+For data with a moderately large number of features, the sample size for each
+class needs to be large as well to obtain 'stable' classifications. However,
+intuitively, once we reach stability, active learning may not be as valuable.
 
 Perhaps, we should depend heavily on clustering upfront and naive classifiers.
 	- Naive classifiers are classifiers that make naive assumptions for speed,
@@ -72,31 +84,53 @@ Expert disagreement and noisy oracles
 			- Can't actually break the object or it can't be deployed
 			- May be too expensive or time-consuming to break it.
 
-Another interesting thing to note is that often there is a large emphasis on measuring the uncertainty of every unlabeled observation for each query. If the number of observations is in the billions, then the measures of uncertainty should become practically close, which implies that it may be hard to differentiate between an observation with a posterior probability of 0.02 and 0.021. It then makes sense to look at a random subset of the unlabeled observations rather than the entire set.
+Another interesting thing to note is that often there is a large emphasis on
+measuring the uncertainty of every unlabeled observation for each query. If the
+number of observations is in the billions, then the measures of uncertainty
+should become practically close, which implies that it may be hard to
+differentiate between an observation with a posterior probability of 0.02 and
+0.021. It then makes sense to look at a random subset of the unlabeled
+observations rather than the entire set.
 
 ...
 
 ***
 
 
-
 2011-10-31 | 17:28 | Random Querying the Initial Training Labels
 
 [active learning, simulations]
 
-I noticed when working with the Iris data set, which has 4 features, that when I randomly selected 15 observations from each of the 3 classes, the covariance matrix of the centered 'setosa' class was singular. This occurred with the QDA classifier. I have experienced a couple of similar issues with the SVM classifiers used in the 'caret' package. This is important to note when we randomly query, say 10, observations at random from each class when the dimension of the data is extremely large. This suggests that the classifiers employed in active learning may have difficulties with classification early on in the querying process, due to the curse of dimensionality.
+I noticed when working with the Iris data set, which has 4 features, that when I
+randomly selected 15 observations from each of the 3 classes, the covariance
+matrix of the centered 'setosa' class was singular. This occurred with the QDA
+classifier. I have experienced a couple of similar issues with the SVM
+classifiers used in the 'caret' package. This is important to note when we
+randomly query, say 10, observations at random from each class when the
+dimension of the data is extremely large. This suggests that the classifiers
+employed in active learning may have difficulties with classification early on
+in the querying process, due to the curse of dimensionality.
 
 ***
-
 
 
 2011-10-31 | 15:05 | Information Density
 
 [activelearning, information density, conference, publication]
 
-The deadline to submit a paper for ICML 2012 (June 25-29) in Edinburgh, Scotland is February 24, 2012. If the paper is conference ready, I would like to submit a conference paper on our view of the Information Density approach to active learning. Even with all of the dissertation stuff going on, if I can stay productive, I can pull this off. There will be many big names at the conference, so it's important that we don't submit the paper to ICML unless it's polished. Contrarily, I think that our idea is novel enough that it will be accepted. Furthermore, if we can present a Bayesian, Frequentist, or nonparametric (all of which could be done) viewpoint regarding the ad hoc nature of information density with a proposed algorithm for estimating parameters, then the method should be quite well-received.
+The deadline to submit a paper for ICML 2012 (June 25-29) in Edinburgh, Scotland
+is February 24, 2012. If the paper is conference ready, I would like to submit a
+conference paper on our view of the Information Density approach to active
+learning. Even with all of the dissertation stuff going on, if I can stay
+productive, I can pull this off. There will be many big names at the conference,
+so it's important that we don't submit the paper to ICML unless it's
+polished. Contrarily, I think that our idea is novel enough that it will be
+accepted. Furthermore, if we can present a Bayesian, Frequentist, or
+nonparametric (all of which could be done) viewpoint regarding the ad hoc nature
+of information density with a proposed algorithm for estimating parameters, then
+the method should be quite well-received.
 
-Properties of Information Density Worth Publishing:
+Properties of Information Density Worth Investigating:
 	- Weighted Loss Function
 	- Resembles a risk function or even a loss weighted by a marginal posterior.
 	- Loss Function weighted by Non-parametric Kernel Density Estimator
@@ -108,7 +142,11 @@ Properties of Information Density Worth Publishing:
 	our method that much more novel, rather than just commentary on an existing
 	model.
 	
-Court Corley sent me an email with a paper by some from Microsoft guys who developed a model similar to my idea. The paper is by Chu, Zinkevich, Li, Thomas, and Tseng (2011 at KDD) called "Unbiased online active learning in data streams." An approach would be to show equivalence of our proposed method to theirs and perhaps some of Zoubin Gharamani's stuff.
+Court Corley sent me an email with a paper by some from Microsoft guys who
+developed a model similar to my idea. The paper is by Chu, Zinkevich, Li,
+Thomas, and Tseng (2011 at KDD) called "Unbiased online active learning in data
+streams." An approach would be to show equivalence of our proposed method to
+theirs and perhaps some of Zoubin Gharamani's stuff.
 
 Here is a link to the ICML 2012 website: http://icml.cc/2012/
 
@@ -120,44 +158,114 @@ T 11 Oct 2011
 
 (A)
 
-I've made a lot of progress today on some documentation for the active learning code, but now I'm working on a basic simulation using the random_query method. I have quickly realized that I have not enabled any way for the user to query the oracle. Rather than doing this manually, I'd prefer to have some function that does this so that an oracle can be "noisy" in a simulation setting. So, I have begun a new wrapper function called "activelearning" in ./R/activelearning.r that is an interface to all of the implemented active learning methods. We need to add the query option as an argument to it. Ultimately, a call to "activelearning" should return a list with at least a 'y' vector with updated labels and a vector that indicates which observations were queried.
+I've made a lot of progress today on some documentation for the active learning
+code, but now I'm working on a basic simulation using the random_query method. I
+have quickly realized that I have not enabled any way for the user to query the
+oracle. Rather than doing this manually, I'd prefer to have some function that
+does this so that an oracle can be "noisy" in a simulation setting. So, I have
+begun a new wrapper function called "activelearning" in ./R/activelearning.r
+that is an interface to all of the implemented active learning methods. We need
+to add the query option as an argument to it. Ultimately, a call to
+"activelearning" should return a list with at least a 'y' vector with updated
+labels and a vector that indicates which observations were queried.
 
 (B)
 
-Yet another interesting thought about active learning. Rather than exclusively thinking of the data as being realizations from a stochastic process, we may think of them as fixed in a bootstrapping sense. The random query method is then a random sample from the empirical CDF of the unlabeled observations. In some sense, the method is naive because each observation has equal probability of being selected, when intuitively, this feels wrong and naive. Hence, an alternative is to randomly sample from the empirical CDF using different weights for each observation. But which weights to use? These certainly could be determined by some of the other methods, including the weaker active learning methods. And then some sampling approach, like importance sampling, could be used.
+Yet another interesting thought about active learning. Rather than exclusively
+thinking of the data as being realizations from a stochastic process, we may
+think of them as fixed in a bootstrapping sense. The random query method is then
+a random sample from the empirical CDF of the unlabeled observations. In some
+sense, the method is naive because each observation has equal probability of
+being selected, when intuitively, this feels wrong and naive. Hence, an
+alternative is to randomly sample from the empirical CDF using different weights
+for each observation. But which weights to use? These certainly could be
+determined by some of the other methods, including the weaker active learning
+methods. And then some sampling approach, like importance sampling, could be
+used.
 
-If I am willing to really delve into the nonparametric notation and literature, this could make for a very rigorous paper using all of the empirical CDF methodology and notation. It looks much harder than it is.
+If I am willing to really delve into the nonparametric notation and literature,
+this could make for a very rigorous paper using all of the empirical CDF
+methodology and notation. It looks much harder than it is.
 
 T 4 Oct 2011
 
-I looked through my active learning papers to see the types of data on which they performed their experiments, and it appears that almost everyone of them use text classification as their primary application. A couple of papers also considered facial recognition. Thus, it is clear that when I release a paper on this topic, at least one of the data sets needs to be a text classification paper.
+I looked through my active learning papers to see the types of data on which
+they performed their experiments, and it appears that almost everyone of them
+use text classification as their primary application. A couple of papers also
+considered facial recognition. Thus, it is clear that when I release a paper on
+this topic, at least one of the data sets needs to be a text classification
+paper.
 
-For now, I am going to use the Iris data set to set the simulations up correctly and to ensure that everything works with minimal computations. After that, I will begin looking at some of the UCI Machine Learning Repository data sets that can simply be plugged-in.
+For now, I am going to use the Iris data set to set the simulations up correctly
+and to ensure that everything works with minimal computations. After that, I
+will begin looking at some of the UCI Machine Learning Repository data sets that
+can simply be plugged-in.
 
 W 28 Sept 2011
 
-In the active learning literature, a number of researchers use the entropy measure to compute disagreement or uncertainty and query the unlabeled observation that maximizes this quantity. I ran into an issue where one of the posterior probabilities was estimated to be 0. Of course, then the entropy includes the 0 * log(0) term, which results in NaN in R. This can reasonably be defined as 0 because p * log(p) approaches 0 as p goes to 0. But to calculate this, I was having to add logic into code I was trying to vectorize.
+In the active learning literature, a number of researchers use the entropy
+measure to compute disagreement or uncertainty and query the unlabeled
+observation that maximizes this quantity. I ran into an issue where one of the
+posterior probabilities was estimated to be 0. Of course, then the entropy
+includes the 0 * log(0) term, which results in NaN in R. This can reasonably be
+defined as 0 because p * log(p) approaches 0 as p goes to 0. But to calculate
+this, I was having to add logic into code I was trying to vectorize.
 
-So I started looking for R packages on CRAN that would do this for me. Of course, there is a package called 'entropy' from Strimmer's lab (man, that guy does a lot). As I was looking at the documentation for his R package, he mentions that the usual plug-in value for entropy can be very biased. I was a bad statistician just using the plug-in principle with the sample proportions in place of the population proportions in the entropy function. In the R package, he gives several different estimators for the entropy.
+So I started looking for R packages on CRAN that would do this for me. Of
+course, there is a package called 'entropy' from Strimmer's lab (man, that guy
+does a lot). As I was looking at the documentation for his R package, he
+mentions that the usual plug-in value for entropy can be very biased. I was a
+bad statistician just using the plug-in principle with the sample proportions in
+place of the population proportions in the entropy function. In the R package,
+he gives several different estimators for the entropy.
 
-My question then is on the usage of the plug-in entropy in active learning. Does it matter which we use? If not, then that's fine, I'll write a nice little blog post and move on. But if it can lead to different results, especially for large unlabeled data or large number of classes or whatever, then this is worth mentioning at a conference. I mention the large number of classes because Strimmer mentions that if there are a lot of zero counts, the plug-in entropy metric is going to be very biased. They wrote a paper in Journal of Machine Learning Research.
+My question then is on the usage of the plug-in entropy in active learning. Does
+it matter which we use? If not, then that's fine, I'll write a nice little blog
+post and move on. But if it can lead to different results, especially for large
+unlabeled data or large number of classes or whatever, then this is worth
+mentioning at a conference. I mention the large number of classes because
+Strimmer mentions that if there are a lot of zero counts, the plug-in entropy
+metric is going to be very biased. They wrote a paper in Journal of Machine
+Learning Research.
 
-Our conference paper could be entitled: "On the Choice of Entropy Estimators in Active Learning"
+Our conference paper could be entitled: "On the Choice of Entropy Estimators in
+Active Learning"
 
-This would be worth investigating after I have gotten a lot of the simulation code written. The modification to my existing code would be relatively simple and could just be a branch for an afternoon if nothing pans out.
+This would be worth investigating after I have gotten a lot of the simulation
+code written. The modification to my existing code would be relatively simple
+and could just be a branch for an afternoon if nothing pans out.
 
 T 20 Sept 2011
 
 Two things to note:
 
-First, the active learning problem may be able to be framed as "minorization" problem. See page 294 of the EoSL book. Note expression (8.63) resembles the approach needed for active learning.
+First, the active learning problem may be able to be framed as "minorization"
+problem. See page 294 of the EoSL book. Note expression (8.63) resembles the
+approach needed for active learning.
 
-Second, on page 126 of the Statistical Learning from a Regression Perspective text, the author explicitly writes the risk associated with a decision (here, the decision is a node of a CART) as the weighted average loss. This is exactly what the information density approach uses.
+Second, on page 126 of the Statistical Learning from a Regression Perspective
+text, the author explicitly writes the risk associated with a decision (here,
+the decision is a node of a CART) as the weighted average loss. This is exactly
+what the information density approach uses.
 
-In Chapter 4 of Burr Settles dissertation (http://www.cs.cmu.edu/~bsettles/pub/settles.thesis.pdf), he provides details about the Information Density approach to Active Learning. Note that he provides several choices of similarity functions, in particular the independent Gaussian function. He then says that tuning the variance parameters does not really make sense because we don't know what it means to optimize them. However, if we approach this in the same way: that is determine a set of distributions that have as their marginal distribution the independent Gaussian. So, then we can explicitly optimize the variance parameters. I actually think this would be a very good approach to active learning: doing everything under the assumption of independence. It will be fast, and for large data sets, I presume it will do quite well. Keep in mind that we can do this in a Bayesian fashion because the posteriors from the labeled data can act as the priors for the marginal. A mixture Gaussian for each class might also be a good thing.
+In Chapter 4 of Burr Settles dissertation
+(http://www.cs.cmu.edu/~bsettles/pub/settles.thesis.pdf), he provides details
+about the Information Density approach to Active Learning. Note that he provides
+several choices of similarity functions, in particular the independent Gaussian
+function. He then says that tuning the variance parameters does not really make
+sense because we don't know what it means to optimize them. However, if we
+approach this in the same way: that is determine a set of distributions that
+have as their marginal distribution the independent Gaussian. So, then we can
+explicitly optimize the variance parameters. I actually think this would be a
+very good approach to active learning: doing everything under the assumption of
+independence. It will be fast, and for large data sets, I presume it will do
+quite well. Keep in mind that we can do this in a Bayesian fashion because the
+posteriors from the labeled data can act as the priors for the marginal. A
+mixture Gaussian for each class might also be a good thing.
 
-We may able to do batch mode to determine multiple observations at once that would jointly maximize the risk.
+We may able to do batch mode to determine multiple observations at once that
+would jointly maximize the risk.
 
-Then, compare his information density functions with my diagonal Gaussian marginal approach and see who wins. He has done a good job of demonstrating how to compare the different methods; just mimic him as much as possible.
-
-For diplomatic reasons, I would like to invite Burrs Settles to contribute to the paper. Once I have developed my model and written it up in a rough draft format, email him to set up a phone call regarding his information density. Just be up front: it's your idea, I applied Bayes, and I would like you to be a co-author on the paper since you know active learning so well. What do you say?
+Then, compare his information density functions with my diagonal Gaussian
+marginal approach and see who wins. He has done a good job of demonstrating how
+to compare the different methods; just mimic him as much as possible.
