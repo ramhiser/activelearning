@@ -1,20 +1,7 @@
-Title:		Active Learning
-Author:		John Ramey
-Web:		   shttp://
-Copyright:	2011 PNNL
-Keywords:	stuff
-			   things
-Version:	1.0
-CSS:		vdb_thumbs.css
-
 ###### Active Learning ######
 ##### John Ramey, 21 September 2011 #####
 
- 
-
 # Introduction to Active Learning #
-
-
 
 # Future Research #
 
