@@ -75,17 +75,17 @@
 #' # For demonstration, suppose that few observations are labeled in 'y'.
 #' y <- replace(y, -c(1:10, 51:60, 101:110), NA)
 #'
-#' query_by_bagging(x = x, y = y, classifier = "lda")
-#' query_by_bagging(x = x, y = y, disagreement = "vote_entropy",
-#'                     classifier = "qda", num_query = 5)
-query_by_bagging <- function(x, y, disagreement = c("kullback", "vote_entropy",
-                             "post_entropy"), classifier, num_query = 1, C = 50,
-                             num_cores = 1, ...) {
+#' query_bagging(x=x, y=y, classifier="lda")
+#' query_bagging(x=x, y=y, classifier="qda", disagreement="vote_entropy",
+#'               num_query = 5)
+query_bagging <- function(x, y, classifier,
+                          disagreement=c("kullback", "vote_entropy", "post_entropy"),
+                          num_query=1, C=50, num_cores=1, ...) {
   # Validates the classifier string.
   validate_classifier(classifier)
 
   # Determines which observations (rows) are labeled.
-	labeled <- which_labeled(y, logical = TRUE)
+	labeled <- which_labeled(y, return_logical=TRUE)
   unlabeled <- which_unlabeled(y)
 
   train_x <- subset(x, labeled)
@@ -95,7 +95,7 @@ query_by_bagging <- function(x, y, disagreement = c("kullback", "vote_entropy",
 
   # Constructs a list of resampled indices from the labeled data.
   # Each list member is a 'committee' member.
-  l_labeled_obs <- createResample(train_y, times = C, list = TRUE)
+  l_labeled_obs <- createResample(train_y, times=C, list=TRUE)
 
 	# For each 'committee' member, we build a classifier from the labeled data
   # and predict each of the unlabeled data. The vote entropy method is
@@ -112,28 +112,28 @@ query_by_bagging <- function(x, y, disagreement = c("kullback", "vote_entropy",
   # TODO: Rather than manually applying parallel processing, let 'caret' do it
   # using its built-in mechanisms.
   bagged_out <- mclapply(l_labeled_obs, function(obs) {
-    train_out <- train(x = train_x[obs, ], y = train_y[obs], method = classifier,
+    train_out <- train(x=train_x[obs, ], y=train_y[obs], method=classifier,
                        ...)
-    predict(train_out, test_x, type = predict_type)
-  }, mc.cores = num_cores)
+    predict(train_out, test_x, type=predict_type)
+  }, mc.cores=num_cores)
 	
   # Computes the disagreement measure for each of the unlabeled observations
   # based on the either the predicted class labes or the posterior probailities
   # of class membership.
 	disagree <- switch(disagreement,
-                     vote_entropy = {
+                     vote_entropy={
                        bagged_out <- do.call(rbind, bagged_out)
                        apply(bagged_out, 2, function(x) {
-                         entropy.empirical(table(factor(x, levels = classes)))
+                         entropy.empirical(table(factor(x, levels=classes)))
                        })
                      },
-                     post_entropy = {
+                     post_entropy={
                        avg_post <- Reduce('+', bagged_out) / length(bagged_out)
                        apply(avg_post, 1, function(obs_post) {
                          entropy.plugin(obs_post)
                        })
                      },
-                     kullback = {
+                     kullback={
                        consensus_prob <- Reduce('+', bagged_out) /
                                          length(bagged_out)
                        kl_member_post <- lapply(bagged_out, function(x) {
@@ -144,9 +144,12 @@ query_by_bagging <- function(x, y, disagreement = c("kullback", "vote_entropy",
                      )
 
   # Determines the order of the unlabeled observations by disagreement measure.
-	query <- order(disagree, decreasing = TRUE)[seq_len(num_query)]
+	query <- order(disagree, decreasing=TRUE)[seq_len(num_query)]
 	
-	out_list <- list(query = query, bagged_out = bagged_out, unlabeled = unlabeled)
+	out_list <- list(query=query, bagged_out=bagged_out, unlabeled=unlabeled)
   out_list[[disagreement]] <- disagree
   out_list
 }
+
+# TODO: Deprecate `query_by_bagging` because verbose.
+query_by_bagging <- query_bagging

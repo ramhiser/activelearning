@@ -1,3 +1,12 @@
+activelearning 0.1.1
+-------------
+
+UPDATES
+
+* `query_bagging()`: To shorten code, `query_by_bagging()` is now
+  `query_bagging()`. Although `query_by_bagging()` still exists, it will be
+  deprecated in a future release.
+
 activelearning 0.1
 -------------
 
