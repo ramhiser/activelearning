@@ -3,7 +3,7 @@
 export(activelearning)
 export(activelearning_sim)
 export(query_bagging)
-export(query_by_committee)
+export(query_committee)
 export(query_oracle)
 export(uncertainty_sampling)
 export(validate_classifier)

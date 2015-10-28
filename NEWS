@@ -7,6 +7,10 @@ UPDATES
   `query_bagging()`. Although `query_by_bagging()` still exists, it will be
   deprecated in a future release.
 
+* `query_committee()`: To shorten code, `query_by_committee()` is now
+  `query_committee()`. Although `query_by_committee()` still exists, it will be
+  deprecated in a future release.
+
 activelearning 0.1
 -------------
 

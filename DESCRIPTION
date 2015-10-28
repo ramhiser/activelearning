@@ -34,5 +34,5 @@ Collate:
     'helpers.r'
     'activelearning-sim.r'
     'query-bagging.r'
-    'query-by-committee.r'
+    'query-committee.r'
     'uncertainty-sampling.r'
