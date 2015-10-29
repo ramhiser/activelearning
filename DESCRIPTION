@@ -21,8 +21,8 @@ Description: Active learning is a machine learning paradigm
     to specify custom classifiers. An excellent literature
     survey has been provided by Dr. Burr Settles.
 Depends:
-    R (>= 3.0.2)
-    caret,
+    R (>= 3.0.2),
+    caret (>= 6.0),
     entropy,
     mlbench,
     parallel

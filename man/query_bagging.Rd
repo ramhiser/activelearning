@@ -4,8 +4,8 @@
 \alias{query_bagging}
 \title{Active learning with "Query by Bagging"}
 \usage{
-query_bagging(x, y, classifier, disagreement = c("kullback", "vote_entropy",
-  "post_entropy"), num_query = 1, C = 50, num_cores = 1, ...)
+query_bagging(x, y, fit, predict, disagreement = c("kullback", "vote_entropy",
+  "post_entropy"), num_query = 1, C = 50, ...)
 }
 \arguments{
 \item{x}{a matrix containing the labeled and unlabeled data}
@@ -13,22 +13,27 @@ query_bagging(x, y, classifier, disagreement = c("kullback", "vote_entropy",
 \item{y}{a vector of the labels for each observation in \code{x}. Use
 \code{NA} for unlabeled observations.}
 
-\item{classifier}{a string that contains the supervised classifier as given in
-the \code{\link{caret}} package.}
+\item{fit}{a function that has arguments \code{x}, \code{y}, and \code{...}
+and produces a model object that can later be used for
+prediction. function that generates predictions for each sub-model. See
+\code{\link[caret]{bagControl}} for more details.}
 
-\item{disagreement}{a string that contains the disagreement measure among the
-committee members. See above for details.}
+\item{predict}{a function that generates predictions for each sub-model. See
+\code{\link[caret]{bagControl}} for more details.}
+
+\item{disagreement}{a string that contains the disagreement measure among
+the committee members. See above for details.}
 
 \item{num_query}{the number of observations to be queried.}
 
 \item{C}{the number of bootstrap committee members}
 
-\item{...}{additional arguments that are sent to the \code{\link{caret}}
-classifier.}
+\item{...}{additional arguments passed to the function specified in
+\code{fit}}
 }
 \value{
 a list that contains the least_certain observation and miscellaneous
-results. See above for details.
+    results. See above for details.
 }
 \description{
 The 'query by bagging' approach to active learning applies bootstrap
@@ -43,7 +48,7 @@ committee member uses the same classifier trained on a resampled subset of
 the labeled training data. With the QBC approach, the user specifies a
 comittee with \code{C} supervised classifiers that are each trained on the
 labeled training data. Also, note that we have implemented QBC as
-\code{\link{query_by_committee}}.
+\code{\link{query_committee}}.
 
 To determine maximum disagreement among bagged committee members, we have
 implemented three approaches:
@@ -80,11 +85,9 @@ Unlabeled observations in \code{y} are assumed to have \code{NA} for a label.
 It is often convenient to query unlabeled observations in batch. By default,
 we query the unlabeled observations with the largest uncertainty measure
 value. With the \code{num_query} the user can specify the number of
-observations to return in batch. If there are ties in the uncertainty measure
-values, they are broken by the order in which the unlabeled observations are
-given.
-
-We use the \code{\link{parallel}} package to perform the bagging in parallel.
+observations to return in batch. If there are ties in the uncertainty
+measure values, they are broken by the order in which the unlabeled
+observations are given.
 }
 \examples{
 x <- iris[, -5]

@@ -11,7 +11,7 @@
 #' the labeled training data. With the QBC approach, the user specifies a
 #' comittee with \code{C} supervised classifiers that are each trained on the
 #' labeled training data. Also, note that we have implemented QBC as
-#' \code{\link{query_by_committee}}.
+#' \code{\link{query_committee}}.
 #'
 #' To determine maximum disagreement among bagged committee members, we have
 #' implemented three approaches:
@@ -42,31 +42,34 @@
 #'
 #' Additional arguments to the specified \code{\link{caret}} classifier can be
 #' passed via \code{...}.
-#' 
+#'
 #' Unlabeled observations in \code{y} are assumed to have \code{NA} for a label.
 #'
 #' It is often convenient to query unlabeled observations in batch. By default,
 #' we query the unlabeled observations with the largest uncertainty measure
 #' value. With the \code{num_query} the user can specify the number of
-#' observations to return in batch. If there are ties in the uncertainty measure
-#' values, they are broken by the order in which the unlabeled observations are
-#' given.
-#'
-#' We use the \code{\link{parallel}} package to perform the bagging in parallel.
+#' observations to return in batch. If there are ties in the uncertainty
+#' measure values, they are broken by the order in which the unlabeled
+#' observations are given.
 #'
 #' @param x a matrix containing the labeled and unlabeled data
 #' @param y a vector of the labels for each observation in \code{x}. Use
-#' \code{NA} for unlabeled observations.
-#' @param disagreement a string that contains the disagreement measure among the
-#' committee members. See above for details.
-#' @param classifier a string that contains the supervised classifier as given in
-#' the \code{\link{caret}} package.
+#'     \code{NA} for unlabeled observations.
+#' @param fit a function that has arguments \code{x}, \code{y}, and \code{...}
+#'     and produces a model object that can later be used for
+#'     prediction. function that generates predictions for each sub-model. See
+#'     \code{\link[caret]{bagControl}} for more details.
+#'@param predict a function that generates predictions for each sub-model. See
+#'     \code{\link[caret]{bagControl}} for more details.
+#' @param disagreement a string that contains the disagreement measure among
+#'     the committee members. See above for details.
 #' @param num_query the number of observations to be queried.
 #' @param C the number of bootstrap committee members
-#' @param ... additional arguments that are sent to the \code{\link{caret}}
-#' classifier.
+#' @param ... additional arguments passed to the function specified in
+#'     \code{fit}
 #' @return a list that contains the least_certain observation and miscellaneous
-#' results. See above for details.
+#'     results. See above for details.
+#' @importFrom caret bag bagControl
 #' @export
 #' @examples
 #' x <- iris[, -5]
@@ -78,9 +81,9 @@
 #' query_bagging(x=x, y=y, classifier="lda")
 #' query_bagging(x=x, y=y, classifier="qda", disagreement="vote_entropy",
 #'               num_query = 5)
-query_bagging <- function(x, y, classifier,
+query_bagging <- function(x, y, fit, predict,
                           disagreement=c("kullback", "vote_entropy", "post_entropy"),
-                          num_query=1, C=50, num_cores=1, ...) {
+                          num_query=1, C=50, ...) {
   # Validates the classifier string.
   validate_classifier(classifier)
 
@@ -91,32 +94,25 @@ query_bagging <- function(x, y, classifier,
   train_x <- subset(x, labeled)
   train_y <- subset(y, labeled)
   test_x <- subset(x, !labeled)
-	n <- nrow(train_x)
 
-  # Constructs a list of resampled indices from the labeled data.
-  # Each list member is a 'committee' member.
-  l_labeled_obs <- createResample(train_y, times=C, list=TRUE)
+	n <- nrow(train_x)
+  p <- ncol(train_x)
 
 	# For each 'committee' member, we build a classifier from the labeled data
   # and predict each of the unlabeled data. The vote entropy method is
   # based on the classifications of the unlabeled data, whereas the posterior
   # entropy and kullback methods utilize the posterior probabilities.
-  if (disagreement == "vote_entropy") {
-    predict_type <- "raw"
-  } else if (disagreement == "kullback" || disagreement == "post_entropy") {
-    predict_type <- "prob"
-    if (!any(caret_lookup$probModel)) {
-      stop("The method, '", classifier, "' must return posterior probabilities")
-    }
-  }
-  # TODO: Rather than manually applying parallel processing, let 'caret' do it
-  # using its built-in mechanisms.
-  bagged_out <- mclapply(l_labeled_obs, function(obs) {
-    train_out <- train(x=train_x[obs, ], y=train_y[obs], method=classifier,
-                       ...)
-    predict(train_out, test_x, type=predict_type)
-  }, mc.cores=num_cores)
-	
+
+  # TODO: The aggregate function in bagControl should be one of:
+  # vote_entropy, post_entropy, kullback
+  bag_control <- bagControl(
+      fit=fit,
+      predict=predict,
+      aggregate='TODO'
+  )
+
+  bag_out <- bag(x=train_x, y=train_y, B=C, vars=p, bagControl=bag_control, ...)
+
   # Computes the disagreement measure for each of the unlabeled observations
   # based on the either the predicted class labes or the posterior probailities
   # of class membership.
@@ -145,7 +141,7 @@ query_bagging <- function(x, y, classifier,
 
   # Determines the order of the unlabeled observations by disagreement measure.
 	query <- order(disagree, decreasing=TRUE)[seq_len(num_query)]
-	
+
 	out_list <- list(query=query, bagged_out=bagged_out, unlabeled=unlabeled)
   out_list[[disagreement]] <- disagree
   out_list
