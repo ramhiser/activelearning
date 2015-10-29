@@ -88,8 +88,8 @@
 query_bagging <- function(x, y, fit, predict,
                           disagreement=c("kullback", "vote_entropy", "post_entropy"),
                           num_query=1, C=50, ...) {
-  # Validates the classifier string.
-  validate_classifier(classifier)
+
+  # TODO: Refactor with a function that splits train/test based on x and y.
 
   # Determines which observations (rows) are labeled.
 	labeled <- which_labeled(y, return_logical=TRUE)
