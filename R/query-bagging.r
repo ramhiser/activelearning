@@ -147,7 +147,8 @@ query_bagging <- function(x, y, fit, predict,
 	query <- order(disagree, decreasing=TRUE)[seq_len(num_query)]
 
 	out_list <- list(query=query, bagged_out=bagged_out, unlabeled=unlabeled)
-  out_list[[disagreement]] <- disagree
+
+  out_list$disagreement <- disagree
   out_list
 }
 

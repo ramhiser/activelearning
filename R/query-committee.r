@@ -125,7 +125,7 @@ query_committee <- function(x, y, committee,
 	
 	out_list <- list(query=query, committee_class=committee_class,
                    committee_post=committee_post, unlabeled=unlabeled)
-  out_list[[disagreement]] <- disagree
+  out_list$disagreement <- disagree
   out_list
 }
 
