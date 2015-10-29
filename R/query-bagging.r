@@ -112,7 +112,9 @@ query_bagging <- function(x, y, fit, predict,
   bag_control <- bagControl(
       fit=fit,
       predict=predict,
-      aggregate='TODO'
+      aggregate='TODO',
+      oob=FALSE,
+      allowParallel=TRUE
   )
 
   bag_out <- bag(x=train_x, y=train_y, B=C, vars=p, bagControl=bag_control, ...)
