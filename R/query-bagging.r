@@ -52,6 +52,10 @@
 #' measure values, they are broken by the order in which the unlabeled
 #' observations are given.
 #'
+#' A parallel backend can be registered for building a QBB model using multiple
+#' workers. For more details, see \code{\link[caret]{train}} or
+#' \url{http://topepo.github.io/caret/parallel.html}.
+#'
 #' @param x a matrix containing the labeled and unlabeled data
 #' @param y a vector of the labels for each observation in \code{x}. Use
 #'     \code{NA} for unlabeled observations.

@@ -88,6 +88,10 @@ value. With the \code{num_query} the user can specify the number of
 observations to return in batch. If there are ties in the uncertainty
 measure values, they are broken by the order in which the unlabeled
 observations are given.
+
+A parallel backend can be registered for building a QBB model using multiple
+workers. For more details, see \code{\link[caret]{train}} or
+\url{http://topepo.github.io/caret/parallel.html}.
 }
 \examples{
 x <- iris[, -5]
