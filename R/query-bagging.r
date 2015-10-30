@@ -90,6 +90,8 @@ query_bagging <- function(x, y, fit, predict,
                           num_query=1, C=50, ...) {
 
   # TODO: Refactor with a function that splits train/test based on x and y.
+  y <- factor(y)
+  classes <- levels(y)
 
   # Determines which observations (rows) are labeled.
 	labeled <- which_labeled(y, return_logical=TRUE)
@@ -109,41 +111,42 @@ query_bagging <- function(x, y, fit, predict,
 
   # TODO: The aggregate function in bagControl should be one of:
   # vote_entropy, post_entropy, kullback
+
+  # Computes the disagreement measure for each of the unlabeled observations
+  # based on the either the predicted class labes or the posterior probailities
+  # of class membership.
+  vote_entropy <- function(x, type='class') {
+    x <- do.call(rbind, x)
+    disagreement <- apply(x, 2, function(col) {
+      entropy(table(factor(col)), method=entropy_method)
+    })
+    disagreement
+  }
+
+  post_entropy <- function(x, type='class') {
+    avg_post <- Reduce('+', x) / length(x)
+    apply(avg_post, 1, function(obs_post) {
+          entropy.plugin(obs_post)
+    })
+  }
+
+  kullback <- function(x, type='class') {
+    consensus_prob <- Reduce('+', x) / length(x))
+    kl_member_post <- lapply(bagged_out, function(obs) {
+      rowSums(obs * log(obs / consensus_prob))
+    })
+    Reduce('+', kl_member_post) / length(kl_member_post)
+  }
+
   bag_control <- bagControl(
       fit=fit,
       predict=predict,
-      aggregate='TODO',
+      aggregate=vote_entropy,
       oob=FALSE,
       allowParallel=TRUE
   )
 
   bag_out <- bag(x=train_x, y=train_y, B=C, vars=p, bagControl=bag_control, ...)
-
-  # Computes the disagreement measure for each of the unlabeled observations
-  # based on the either the predicted class labes or the posterior probailities
-  # of class membership.
-	disagree <- switch(disagreement,
-                     vote_entropy={
-                       bagged_out <- do.call(rbind, bagged_out)
-                       apply(bagged_out, 2, function(x) {
-                         entropy.empirical(table(factor(x, levels=classes)))
-                       })
-                     },
-                     post_entropy={
-                       avg_post <- Reduce('+', bagged_out) / length(bagged_out)
-                       apply(avg_post, 1, function(obs_post) {
-                         entropy.plugin(obs_post)
-                       })
-                     },
-                     kullback={
-                       consensus_prob <- Reduce('+', bagged_out) /
-                                         length(bagged_out)
-                       kl_member_post <- lapply(bagged_out, function(x) {
-                         rowSums(x * log(x / consensus_prob))
-                       })
-                       Reduce('+', kl_member_post) / length(kl_member_post)
-                     }
-                     )
 
   # Determines the order of the unlabeled observations by disagreement measure.
 	query <- order(disagree, decreasing=TRUE)[seq_len(num_query)]
