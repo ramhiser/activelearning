@@ -59,6 +59,13 @@ Settles' "Active Learning Literature Survey" available on his website.
 At the time this function was coded, the literature survey had last been
 updated on January 26, 2010.
 
+We require a user-specified supervised classifier from the \code{\link{caret}}
+R package. Furthermore, we assume that the classifier returns posterior
+probabilities of class membership; otherwise, an error is thrown. To obtain a
+list of valid classifiers, see the \code{\link{caret}} vignettes, which are
+available on CRAN. Also, see the \code{\link{modelLookup}} function in the
+\code{\link{caret}} package.
+
 To specify the committee members, we require a character vector of classifiers
 in the \code{committee} argument with elements corresponding to each
 supervised classifier (each committee member). The classifiers must match the

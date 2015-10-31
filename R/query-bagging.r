@@ -2,19 +2,16 @@
 #'
 #' The 'query by bagging' approach to active learning applies bootstrap
 #' aggregating (bagging) by randomly sampling with replacement \code{C} times
-#' from the training data to create a committe of B classifiers. Our goal is to
-#' "query the oracle" with the observations that have the maximum disagreement
-#' among the \code{C} trained classifiers.
+#' from the training data to create a committe of \code{C} classifiers. Our goal
+#' is to "query the oracle" with the observations that have the maximum
+#' disagreement among the \code{C} trained classifiers.
 #'
-#' Note that this approach is similar to "Query by Committee" (QBC), but each
-#' committee member uses the same classifier trained on a resampled subset of
-#' the labeled training data. With the QBC approach, the user specifies a
-#' comittee with \code{C} supervised classifiers that are each trained on the
-#' labeled training data. Also, note that we have implemented QBC as
-#' \code{\link{query_committee}}.
+#' Note that this approach is similar to "Query by Committee" (QBC) in
+#' \code{\link{query_committee}}, but each committee member uses the same
+#' classifier trained on a resampled subset of the labeled training data.
 #'
-#' To determine maximum disagreement among bagged committee members, we have
-#' implemented three approaches:
+#' To determine maximum \code{disagreement} among bagged committee members, we
+#' have implemented three approaches:
 #' \describe{
 #' \item{kullback}{query the unlabeled observation that maximizes the
 #' Kullback-Leibler divergence between the label distributions of any one
@@ -25,23 +22,9 @@
 #' of average posterior probabilities of all committee members}
 #' }
 #'
-#' The \code{disagreement} argument must be one of the three: \code{kullback} is
-#' the default.
-#'
 #' To calculate the committee disagreement, we use the formulae from Dr. Burr
-#' Settles' excellent "Active Learning Literature Survey" available on his
-#' website. At the time this function was coded, the literature survey had last
-#' been updated on January 26, 2010.
-#'
-#' We require a user-specified supervised classifier from the \code{\link{caret}}
-#' R package. Furthermore, we assume that the classifier returns posterior
-#' probabilities of class membership; otherwise, an error is thrown. To obtain a
-#' list of valid classifiers, see the \code{\link{caret}} vignettes, which are
-#' available on CRAN. Also, see the \code{\link{modelLookup}} function in the
-#' \code{\link{caret}} package.
-#'
-#' Additional arguments to the specified \code{\link{caret}} classifier can be
-#' passed via \code{...}.
+#' Settles' excellent "Active Learning Literature Survey" available at
+#' \url{http://burrsettles.com/pub/settles.activelearning.pdf}.
 #'
 #' Unlabeled observations in \code{y} are assumed to have \code{NA} for a label.
 #'
@@ -82,9 +65,16 @@
 #' # For demonstration, suppose that few observations are labeled in 'y'.
 #' y <- replace(y, -c(1:10, 51:60, 101:110), NA)
 #'
-#' query_bagging(x=x, y=y, classifier="lda")
-#' query_bagging(x=x, y=y, classifier="qda", disagreement="vote_entropy",
-#'               num_query = 5)
+#' fit_f <- function(x, y, ...) {
+#'   MASS::lda(x, y, ...)
+#' }
+#' predict_f <- function(object, x) {
+#'   predict(object, x)$class
+#' }
+#'
+#' query_bagging(x=x, y=y, fit=fit_f, predict=predict_f, C=5)
+#' query_bagging(x=x, y=y, fit=fit_f, predict=predict_f, C=10
+#'               disagreement="vote_entropy", num_query=5)
 query_bagging <- function(x, y, fit, predict,
                           disagreement=c("kullback", "vote_entropy", "post_entropy"),
                           num_query=1, C=50, ...) {
@@ -131,7 +121,7 @@ query_bagging <- function(x, y, fit, predict,
   }
 
   kullback <- function(x, type='class') {
-    consensus_prob <- Reduce('+', x) / length(x))
+    consensus_prob <- Reduce('+', x) / length(x)
     kl_member_post <- lapply(bagged_out, function(obs) {
       rowSums(obs * log(obs / consensus_prob))
     })
@@ -147,9 +137,10 @@ query_bagging <- function(x, y, fit, predict,
   )
 
   bag_out <- bag(x=train_x, y=train_y, B=C, vars=p, bagControl=bag_control, ...)
+  disagreement <- predict(bag_out, test_x)
 
   # Determines the order of the unlabeled observations by disagreement measure.
-	query <- order(disagree, decreasing=TRUE)[seq_len(num_query)]
+	query <- order(disagreement, decreasing=TRUE)[seq_len(num_query)]
 
 	out_list <- list(query=query, bagged_out=bagged_out, unlabeled=unlabeled)
 
