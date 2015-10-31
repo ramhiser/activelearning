@@ -99,9 +99,6 @@ query_bagging <- function(x, y, fit, predict,
   # based on the classifications of the unlabeled data, whereas the posterior
   # entropy and kullback methods utilize the posterior probabilities.
 
-  # TODO: The aggregate function in bagControl should be one of:
-  # vote_entropy, post_entropy, kullback
-
   # Computes the disagreement measure for each of the unlabeled observations
   # based on the either the predicted class labes or the posterior probailities
   # of class membership.
@@ -116,21 +113,22 @@ query_bagging <- function(x, y, fit, predict,
   post_entropy <- function(x, type='class') {
     avg_post <- Reduce('+', x) / length(x)
     apply(avg_post, 1, function(obs_post) {
-          entropy.plugin(obs_post)
+      entropy.plugin(obs_post)
     })
   }
 
   kullback <- function(x, type='class') {
     consensus_prob <- Reduce('+', x) / length(x)
-    kl_member_post <- lapply(bagged_out, function(obs) {
+    kl_member_post <- lapply(s, function(obs) {
       rowSums(obs * log(obs / consensus_prob))
     })
     Reduce('+', kl_member_post) / length(kl_member_post)
   }
 
-  bag_control <- bagControl(
+  bag_control <- caret::bagControl(
       fit=fit,
       predict=predict,
+      # TODO: Pass the appropriate aggregation function
       aggregate=vote_entropy,
       oob=FALSE,
       allowParallel=TRUE
@@ -140,12 +138,9 @@ query_bagging <- function(x, y, fit, predict,
   disagreement <- predict(bag_out, test_x)
 
   # Determines the order of the unlabeled observations by disagreement measure.
-	query <- order(disagreement, decreasing=TRUE)[seq_len(num_query)]
+	query <- head(order(disagreement, decreasing=TRUE), n=num_query)
 
-	out_list <- list(query=query, bagged_out=bagged_out, unlabeled=unlabeled)
-
-  out_list$disagreement <- disagree
-  out_list
+	list(query=query, disagreement=disagreement, unlabeled=unlabeled)
 }
 
 # TODO: Deprecate `query_by_bagging` because verbose.
