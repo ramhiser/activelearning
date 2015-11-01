@@ -21,8 +21,8 @@ prediction. function that generates predictions for each sub-model. See
 \item{predict}{a function that generates predictions for each sub-model. See
 \code{\link[caret]{bagControl}} for more details.}
 
-\item{disagreement}{a string that contains the disagreement measure among
-the committee members. See above for details.}
+\item{disagreement}{a string that contains the disagreement measure among the
+committee members. See above for details.}
 
 \item{num_query}{the number of observations to be queried.}
 
@@ -32,14 +32,14 @@ the committee members. See above for details.}
 \code{fit}}
 }
 \value{
-a list that contains the least_certain observation and miscellaneous
-    results. See above for details.
+a list indicates which observations to \code{query} along with the
+    \code{disagreement} values of the unlabeled observations.
 }
 \description{
 The 'query by bagging' approach to active learning applies bootstrap
 aggregating (bagging) by randomly sampling with replacement \code{C} times
-from the training data to create a committe of \code{C} classifiers. Our goal
-is to "query the oracle" with the observations that have the maximum
+from the training data to create a committee of \code{C} classifiers. Our
+goal is to "query the oracle" with the observations that have the maximum
 disagreement among the \code{C} trained classifiers.
 }
 \details{
@@ -52,7 +52,7 @@ have implemented three approaches:
 \describe{
 \item{kullback}{query the unlabeled observation that maximizes the
 Kullback-Leibler divergence between the label distributions of any one
-committe member and the consensus}
+committee member and the consensus}
 \item{vote_entropy}{query the unlabeled observation that maximizes the vote
 entropy among all commitee members}
 \item{post_entropy}{query the unlabeled observation that maximizes the entropy

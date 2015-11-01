@@ -33,6 +33,7 @@ Collate:
     'activelearning.r'
     'helpers.r'
     'activelearning-sim.r'
+    'disagreement.r'
     'query-bagging.r'
     'query-committee.r'
     'uncertainty-sampling.r'
