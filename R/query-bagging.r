@@ -79,6 +79,12 @@ query_bagging <- function(x, y, fit, predict,
                           disagreement=c("kullback", "vote_entropy", "post_entropy"),
                           num_query=1, C=50, ...) {
 
+  disagreement <- match.arg(disagreement)
+  disagree_f <- switch(disagreement,
+                       "kullback"=kullback,
+                       "vote_entropy"=vote_entropy,
+                       "post_entropy"=post_entropy)
+
   # TODO: Refactor with a function that splits train/test based on x and y.
   y <- factor(y)
   classes <- levels(y)
@@ -94,42 +100,10 @@ query_bagging <- function(x, y, fit, predict,
 	n <- nrow(train_x)
   p <- ncol(train_x)
 
-	# For each 'committee' member, we build a classifier from the labeled data
-  # and predict each of the unlabeled data. The vote entropy method is
-  # based on the classifications of the unlabeled data, whereas the posterior
-  # entropy and kullback methods utilize the posterior probabilities.
-
-  # Computes the disagreement measure for each of the unlabeled observations
-  # based on the either the predicted class labes or the posterior probailities
-  # of class membership.
-  vote_entropy <- function(x, type='class') {
-    x <- do.call(rbind, x)
-    disagreement <- apply(x, 2, function(col) {
-      entropy(table(factor(col)), method=entropy_method)
-    })
-    disagreement
-  }
-
-  post_entropy <- function(x, type='class') {
-    avg_post <- Reduce('+', x) / length(x)
-    apply(avg_post, 1, function(obs_post) {
-      entropy.plugin(obs_post)
-    })
-  }
-
-  kullback <- function(x, type='class') {
-    consensus_prob <- Reduce('+', x) / length(x)
-    kl_member_post <- lapply(s, function(obs) {
-      rowSums(obs * log(obs / consensus_prob))
-    })
-    Reduce('+', kl_member_post) / length(kl_member_post)
-  }
-
   bag_control <- caret::bagControl(
       fit=fit,
       predict=predict,
-      # TODO: Pass the appropriate aggregation function
-      aggregate=vote_entropy,
+      aggregate=disagree_f,
       oob=FALSE,
       allowParallel=TRUE
   )
