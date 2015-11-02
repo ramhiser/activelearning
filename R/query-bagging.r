@@ -85,20 +85,9 @@ query_bagging <- function(x, y, fit, predict,
                        "vote_entropy"=vote_entropy,
                        "post_entropy"=post_entropy)
 
-  # TODO: Refactor with a function that splits train/test based on x and y.
+  x <- as.matrix(x)
   y <- factor(y)
-  classes <- levels(y)
-
-  # Determines which observations (rows) are labeled.
-	labeled <- which_labeled(y, return_logical=TRUE)
-  unlabeled <- which_unlabeled(y)
-
-  train_x <- subset(x, labeled)
-  train_y <- subset(y, labeled)
-  test_x <- subset(x, !labeled)
-
-	n <- nrow(train_x)
-  p <- ncol(train_x)
+  split_out <- split_labeled(x, y)
 
   bag_control <- caret::bagControl(
       fit=fit,
@@ -108,8 +97,10 @@ query_bagging <- function(x, y, fit, predict,
       allowParallel=TRUE
   )
 
-  bag_out <- bag(x=train_x, y=train_y, B=C, vars=p, bagControl=bag_control, ...)
-  disagreement <- predict(bag_out, test_x)
+  bag_out <- bag(x=split_out$x_labeled,
+                 y=split_out$y_labeled,
+                 B=C, vars=p, bagControl=bag_control, ...)
+  disagreement <- predict(bag_out, split_out$x_unlabeled)
 
   # Determines the order of the unlabeled observations by disagreement measure.
 	query <- head(order(disagreement, decreasing=TRUE), n=num_query)

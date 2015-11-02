@@ -1,23 +1,23 @@
-# @param return_logical If TRUE, then a Boolean vector if returned. If FALSE,
-# then a vector of indices corresponding to the Boolean values is returned.
-which_unlabeled <- function(y, return_logical = FALSE) {
-  if (return_logical) {
-    out <- is.na(y)
-  } else {
-    out <- which(is.na(y))
-  }
-  out
+# Returns a vector of indices of unlabeled observations.
+which_unlabeled <- function(y) {
+  which(is.na(y))
 }
 
-# @param return_logical If TRUE, then a Boolean vector if returned. If FALSE,
-# then a vector of indices corresponding to the Boolean values is returned.
+# Returns a vector of indices of labeled observations.
 which_labeled <- function(y, return_logical = FALSE) {
-  if (return_logical) {
-    out <- !is.na(y)
-  } else {
-    out <- which(!is.na(y))
-  }
-  out
+  which(!is.na(y))
+}
+
+# Splits a matrix and its class labels into labeled and unlabeled pairs.
+split_labeled <- function(x, y) {
+  x <- as.matrix(x)
+  y <- factor(y)
+
+  unlabeled_i <- which_unlabeled(y)
+  list(x_labeled=x[-unlabeled_i, ],
+       y_labeled=y[-unlabeled_i],
+       x_unlabeled=x[unlabeled_i, ],
+       y_unlabeled=y[unlabeled_i])
 }
 
 #' Validates the classifier specified from the 'caret' package
