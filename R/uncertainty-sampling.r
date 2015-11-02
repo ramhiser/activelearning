@@ -59,40 +59,40 @@
 #' # For demonstration, suppose that few observations are labeled in 'y'.
 #' y <- replace(y, -c(1:10, 51:60, 101:110), NA)
 #'
-#' uncertainty_sampling(x = x, y = y, classifier = "lda")
-#' uncertainty_sampling(x = x, y = y, uncertainty = "entropy",
-#'                     classifier = "qda", num_query = 5)
-uncertainty_sampling <- function(x, y, uncertainty = "entropy", classifier,
-                                 num_query = 1, ...) {
+#' uncertainty_sampling(x=x, y=y, classifier="lda")
+#' uncertainty_sampling(x=x, y=y, uncertainty="entropy",
+#'                     classifier="qda", num_query=5)
+uncertainty_sampling <- function(x, y, uncertainty="entropy", classifier,
+                                 num_query=1, ...) {
 
   # Validates the classifier string.
-  validate_classifier(classifier, posterior_prob = TRUE)
+  validate_classifier(classifier, posterior_prob=TRUE)
   
-  # Determines which observations (rows) are labeled.
-	labeled <- which_labeled(y, return_logical = TRUE)
-  unlabeled <- which_unlabeled(y)
+  x <- as.matrix(x)
+  y <- factor(y)
+  split_out <- split_labeled(x, y)
 
-  # Trains the classifier with caret:::train
-  train_out <- train(x = subset(x, labeled), y = subset(y, labeled),
-                     method = classifier, verbose = FALSE, ...)
+  train_out <- train(x=split_out$x_labeled, y=split_out$y_labeled,
+                     method=classifier, verbose=FALSE, ...)
 
   # Extracts the class posterior probabilities for the unlabeled observations.
-	posterior <- predict(train_out, newdata = x[unlabeled, ], type = "prob")
+	posterior <- predict(train_out, newdata=split_out$x_unlabeled, type="prob")
   posterior <- unname(data.matrix(posterior))
     
   # Computes the specified uncertainty for each of the unlabeled observations
   # based on the posterior probabilities of class membership.
+  # TODO: Refactor and move function to disagreement.r
   obs_uncertainty <- switch(uncertainty,
-                       least_confidence = apply(posterior, 1, max),
-                       margin = apply(posterior, 1, function(post_i) {
-                         post_i[order(post_i, decreasing = T)[1:2]] %*% c(1, -1)
+                       least_confidence=apply(posterior, 1, max),
+                       margin=apply(posterior, 1, function(post_i) {
+                         post_i[order(post_i, decreasing=T)[1:2]] %*% c(1, -1)
                        }),
-                       entropy = apply(posterior, 1, entropy.plugin)
+                       entropy=apply(posterior, 1, entropy.plugin)
                      )
   # Determines the order of the unlabeled observations by uncertainty measure.
-	query <- order(obs_uncertainty, decreasing = T)[seq_len(num_query)]
+	query <- order(obs_uncertainty, decreasing=T)[seq_len(num_query)]
 	
-	out_list <- list(query = query, posterior = posterior, unlabeled = unlabeled)
+	out_list <- list(query=query, posterior=posterior, unlabeled=unlabeled)
   out_list[[uncertainty]] <- obs_uncertainty
   out_list
 }

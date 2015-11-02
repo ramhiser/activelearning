@@ -71,14 +71,13 @@
 #' # For demonstration, suppose that few observations are labeled in 'y'.
 #' y <- replace(y, -c(1:12, 51:62, 101:112), NA)
 #'
-#' committee <- c("lda", "qda", "rda")
+#' committee <- c("lda", "qda", "gbm")
 #' query_committee(x=x, y=y, committee=committee, num_query=3)$query
 #' query_committee(x=x, y=y, committee=committee, disagreement="post_entropy",
 #'                 num_query=5)$query
 query_committee <- function(x, y, committee,
-                            disagreement=c("kullback", "vote_entropy",
-                                 "post_entropy"), num_query=1, num_cores=1,
-                            ...) {
+                            disagreement=c("kullback", "vote_entropy", "post_entropy"),
+                            num_query=1, num_cores=1, ...) {
   # Validates the classifier string.
   dev_null <- lapply(committee, validate_classifier, posterior_prob=TRUE)
 
@@ -87,13 +86,15 @@ query_committee <- function(x, y, committee,
 	unlabeled <- which_unlabeled(y)
 	n <- length(y) - length(unlabeled)
   
-  train_x <- x[-unlabeled, ]
-  train_y <- y[-unlabeled]
-  test_x <- x[unlabeled, ]
+  x <- as.matrix(x)
+  y <- factor(y)
+  split_out <- split_labeled(x, y)
 
 	# Trains each classifier in the committee with the 'caret' implementation.
   committee_fits <- mclapply(committee, function(classifier) {
-    train(x=train_x, y=train_y, method=classifier)
+    train(x=split_out$x_labeled,
+          y=split_out$y_labeled,
+          method=classifier)
   }, mc.cores=num_cores)
 
   # Classifies the unlabeled observations with each committee member and also
