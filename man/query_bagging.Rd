@@ -91,7 +91,7 @@ predict_f <- function(object, x) {
 }
 
 query_bagging(x=x, y=y, fit=fit_f, predict=predict_f, C=5)
-query_bagging(x=x, y=y, fit=fit_f, predict=predict_f, C=10
+query_bagging(x=x, y=y, fit=fit_f, predict=predict_f, C=10,
               disagreement="vote_entropy", num_query=5)
 }
 
