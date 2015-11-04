@@ -87,7 +87,7 @@ y <- iris[, 5]
 # For demonstration, suppose that few observations are labeled in 'y'.
 y <- replace(y, -c(1:12, 51:62, 101:112), NA)
 
-committee <- c("lda", "qda", "rda")
+committee <- c("lda", "qda", "gbm")
 query_committee(x=x, y=y, committee=committee, num_query=3)$query
 query_committee(x=x, y=y, committee=committee, disagreement="post_entropy",
                 num_query=5)$query

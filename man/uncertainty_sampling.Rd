@@ -76,8 +76,8 @@ y <- iris[, 5]
 # For demonstration, suppose that few observations are labeled in 'y'.
 y <- replace(y, -c(1:10, 51:60, 101:110), NA)
 
-uncertainty_sampling(x = x, y = y, classifier = "lda")
-uncertainty_sampling(x = x, y = y, uncertainty = "entropy",
-                    classifier = "qda", num_query = 5)
+uncertainty_sampling(x=x, y=y, classifier="lda")
+uncertainty_sampling(x=x, y=y, uncertainty="entropy",
+                    classifier="qda", num_query=5)
 }
 
