@@ -37,3 +37,4 @@ Collate:
     'query-bagging.r'
     'query-committee.r'
     'uncertainty-sampling.r'
+RoxygenNote: 5.0.0
