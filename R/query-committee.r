@@ -77,25 +77,22 @@
 #'                 num_query=5)$query
 query_committee <- function(x, y, committee,
                             disagreement=c("kullback", "vote_entropy", "post_entropy"),
-                            num_query=1, num_cores=1, ...) {
+                            num_query=1, ...) {
   # Validates the classifier string.
   dev_null <- lapply(committee, validate_classifier, posterior_prob=TRUE)
 
   disagreement <- match.arg(disagreement)
 
-	unlabeled <- which_unlabeled(y)
-	n <- length(y) - length(unlabeled)
-  
   x <- as.matrix(x)
   y <- factor(y)
   split_out <- split_labeled(x, y)
 
 	# Trains each classifier in the committee with the 'caret' implementation.
-  committee_fits <- mclapply(committee, function(classifier) {
+  committee_fits <- lapply(committee, function(classifier) {
     train(x=split_out$x_labeled,
           y=split_out$y_labeled,
           method=classifier)
-  }, mc.cores=num_cores)
+  })
 
   # Classifies the unlabeled observations with each committee member and also
   # determines their posterior probabilities.
@@ -104,37 +101,16 @@ query_committee <- function(x, y, committee,
 
 	committee_post <- predict(committee_fits, test_x, type="prob")
   
-	disagree <- switch(disagreement,
-                     vote_entropy=apply(committee_class, 1, function(x) {
-                       entropy(table(factor(x, levels=levels(y))))
-                     }),
-                     post_entropy={
-                       avg_post <- Reduce('+', committee_post)
-                       avg_post <- avg_post / length(committee_post)
-                       apply(avg_post, 1, function(obs_post) {
-                         entropy(obs_post)
-                       })
-                     },
-                     # TODO: Refactor K-L and make it its own helper function.
-                     kullback={
-                       consensus_prob <- Reduce('+', committee_post)
-                       consensus_prob <- consensus_prob / length(committee_post)
-                       kl_post_by_member <- lapply(committee_post, function(x) {
-                         # NOTE: This is equivalent to:
-                         # rowSums(x * log(x / consensus_prob))
-                         # The identity improves numerical stability.
-                         rowSums(log(exp(x) + x / consensus_prob))
-                       })
-                       Reduce('+', kl_post_by_member) / length(kl_post_by_member)
-                     }
-                    )
+	disagreement <- switch(disagreement,
+                         vote_entropy=vote_entropy(committee_class),
+                         post_entropy=post_entropy(committee_post),
+                         kullback=kullback(committee_post))
 
-  query <- order(disagree, decreasing=TRUE)[seq_len(num_query)]
+  query <- order(disagreement, decreasing=TRUE)[seq_len(num_query)]
 	
-	out_list <- list(query=query, committee_class=committee_class,
-                   committee_post=committee_post, unlabeled=unlabeled)
-  out_list$disagreement <- disagree
-  out_list
+  list(query=query, disagreement=disagreement, committee_class=committee_class,
+       committee_post=committee_post)
 }
 
+# TODO: Deprecate `query_by_committee` because verbose.
 query_by_committee <- query_committee

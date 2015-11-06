@@ -17,6 +17,10 @@ post_entropy <- function(x, type='class') {
 }
 
 kullback <- function(x, type='class') {
+  # TODO: Check if this is a better approach.
+  # NOTE: This is equivalent to:
+  # rowSums(x * log(x / consensus_prob))
+  # The identity improves numerical stability.
   consensus_prob <- Reduce('+', x) / length(x)
   kl_member_post <- lapply(x, function(obs) {
     rowSums(obs * log(obs / consensus_prob))

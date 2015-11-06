@@ -5,7 +5,7 @@
 \title{Active learning with "Query by Committee"}
 \usage{
 query_committee(x, y, committee, disagreement = c("kullback", "vote_entropy",
-  "post_entropy"), num_query = 1, num_cores = 1, ...)
+  "post_entropy"), num_query = 1, ...)
 }
 \arguments{
 \item{x}{a matrix containing the labeled and unlabeled data}
