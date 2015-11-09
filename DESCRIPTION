@@ -24,6 +24,7 @@ Depends:
     R (>= 3.0.2),
     caret (>= 6.0),
     entropy,
+    itertools2,
     mlbench,
     parallel
 License: MIT
