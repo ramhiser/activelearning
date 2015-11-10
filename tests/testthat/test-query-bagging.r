@@ -36,7 +36,7 @@ test_that("QBB works with posterior-entropy disagreement", {
     MASS::lda(x, y, ...)
   }
   predict_f <- function(object, x) {
-    predict(object, x)$class
+    predict(object, x)$posterior
   }
 
   query_out <- query_bagging(x=x, y=y_missing, fit=fit_f, predict=predict_f,
