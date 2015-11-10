@@ -72,10 +72,10 @@
 #'   predict(object, x)$class
 #' }
 #'
-#' query_bagging(x=x, y=y, fit=fit_f, predict=predict_f, C=5)
-#' query_bagging(x=x, y=y, fit=fit_f, predict=predict_f, C=10,
+#' query_bagging(x=x, y=y, fit_f=fit_f, predict_f=predict_f, C=10)
+#' query_bagging(x=x, y=y, fit_f=fit_f, predict_f=predict_f, C=10,
 #'               disagreement="vote_entropy", num_query=5)
-query_bagging <- function(x, y, fit, predict,
+query_bagging <- function(x, y, fit_f, predict_f,
                           disagreement=c("kullback", "vote_entropy", "post_entropy"),
                           num_query=1, C=50, ...) {
 
@@ -91,8 +91,8 @@ query_bagging <- function(x, y, fit, predict,
   split_out <- split_labeled(x, y)
 
   bag_control <- caret::bagControl(
-      fit=fit,
-      predict=predict,
+      fit=fit_f,
+      predict=predict_f,
       aggregate=disagree_f,
       oob=FALSE,
       allowParallel=TRUE
@@ -106,7 +106,7 @@ query_bagging <- function(x, y, fit, predict,
   # Determines the order of the unlabeled observations by disagreement measure.
   query <- head(order(disagreement, decreasing=TRUE), n=num_query)
 
-  list(query=query, disagreement=disagreement, unlabeled=unlabeled)
+  list(query=query, disagreement=disagreement)
 }
 
 # TODO: Deprecate `query_by_bagging` because verbose.

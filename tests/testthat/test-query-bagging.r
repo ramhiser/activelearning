@@ -14,7 +14,7 @@ test_that("QBB works with Kullback disagreement", {
 
   query_out <- query_bagging(x=x, y=y_missing, fit=fit_f, predict=predict_f,
                              disagreement="kullback", C=10)
-  expect_true(FALSE)
+  expect_equal(length(query_out$query), 1)
 })
 
 test_that("QBB works with vote-entropy disagreement", {
@@ -27,7 +27,7 @@ test_that("QBB works with vote-entropy disagreement", {
 
   set.seed(42)
   query_out <- query_bagging(x=x, y=y_missing, fit=fit_f, predict=predict_f,
-                             disagreement="vote_entropy", C=10)
+                             disagreement="vote_entropy", C=5)
   expect_equal(length(query_out$query), 1)
 })
 
@@ -50,5 +50,5 @@ test_that("Handle errors from classifiers", {
   y_missing <- replace(y, -c(1:10, 51:60, 101:110), NA)
   query_out <- query_bagging(x=x, y=y_missing, classifier="qda",
                              disagreement="vote_entropy", num_query=5)
-  expect_true(FALSE)
+  expect_equal(length(query_out$query), 1)
 })

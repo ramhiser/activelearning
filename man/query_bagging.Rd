@@ -4,22 +4,14 @@
 \alias{query_bagging}
 \title{Active learning with "Query by Bagging"}
 \usage{
-query_bagging(x, y, fit, predict, disagreement = c("kullback", "vote_entropy",
-  "post_entropy"), num_query = 1, C = 50, ...)
+query_bagging(x, y, fit_f, predict_f, disagreement = c("kullback",
+  "vote_entropy", "post_entropy"), num_query = 1, C = 50, ...)
 }
 \arguments{
 \item{x}{a matrix containing the labeled and unlabeled data}
 
 \item{y}{a vector of the labels for each observation in \code{x}. Use
 \code{NA} for unlabeled observations.}
-
-\item{fit}{a function that has arguments \code{x}, \code{y}, and \code{...}
-and produces a model object that can later be used for
-prediction. function that generates predictions for each sub-model. See
-\code{\link[caret]{bagControl}} for more details.}
-
-\item{predict}{a function that generates predictions for each sub-model. See
-\code{\link[caret]{bagControl}} for more details.}
 
 \item{disagreement}{a string that contains the disagreement measure among the
 committee members. See above for details.}
@@ -30,6 +22,14 @@ committee members. See above for details.}
 
 \item{...}{additional arguments passed to the function specified in
 \code{fit}}
+
+\item{fit}{a function that has arguments \code{x}, \code{y}, and \code{...}
+and produces a model object that can later be used for
+prediction. function that generates predictions for each sub-model. See
+\code{\link[caret]{bagControl}} for more details.}
+
+\item{predict}{a function that generates predictions for each sub-model. See
+\code{\link[caret]{bagControl}} for more details.}
 }
 \value{
 a list indicates which observations to \code{query} along with the
@@ -90,8 +90,8 @@ predict_f <- function(object, x) {
   predict(object, x)$class
 }
 
-query_bagging(x=x, y=y, fit=fit_f, predict=predict_f, C=5)
-query_bagging(x=x, y=y, fit=fit_f, predict=predict_f, C=10,
+query_bagging(x=x, y=y, fit_f=fit_f, predict_f=predict_f, C=10)
+query_bagging(x=x, y=y, fit_f=fit_f, predict_f=predict_f, C=10,
               disagreement="vote_entropy", num_query=5)
 }
 
