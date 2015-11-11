@@ -98,9 +98,18 @@ query_bagging <- function(x, y, fit_f, predict_f,
       allowParallel=TRUE
   )
 
-  bag_out <- bag(x=split_out$x_labeled,
-                 y=split_out$y_labeled,
-                 B=C, vars=p, bagControl=bag_control, ...)
+  bag_out <- try(
+    bag(x=split_out$x_labeled,
+        y=split_out$y_labeled,
+        B=C, vars=p, bagControl=bag_control, ...),
+    silent=TRUE
+  )
+
+  if (inherits(bag_out, "try-error")) {
+    stop("The following error occurred while training the bagged classifiers:\n",
+         bag_out)
+  }
+
   disagreement <- predict(bag_out, split_out$x_unlabeled)
 
   # Determines the order of the unlabeled observations by disagreement measure.
