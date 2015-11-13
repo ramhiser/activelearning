@@ -29,3 +29,17 @@ kullback <- function(x, type='posterior') {
 
   Reduce('+', kullback_members) / length(kullback_members)
 }
+
+entropy_uncertainty <- function(posterior) {
+  apply(posterior, 1, entropy.plugin)
+}
+
+least_confidence <- function(posterior) {
+  apply(posterior, 1, max)
+}
+
+margin_uncertainty <- function(posterior) {
+  apply(posterior, 1, function(post_i) {
+    post_i[order(post_i, decreasing=T)[1:2]] %*% c(1, -1)
+  })
+}
