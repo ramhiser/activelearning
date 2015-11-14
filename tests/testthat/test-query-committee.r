@@ -19,8 +19,8 @@ test_that("QBC works with Kullback disagreement", {
 
   set.seed(42)
   query_out <- query_committee(x=x, y=y_missing,
-                               fit=fit_committee,
-                               predict=predict_committee,
+                               fit_committee=fit_committee,
+                               predict_committee=predict_committee,
                                disagreement="kullback")
   expect_equal(length(query_out$query), 1)
 })
@@ -40,10 +40,9 @@ test_that("QBC works with vote-entropy disagreement", {
 
   set.seed(42)
   query_out <- query_committee(x=x, y=y_missing,
-                               fit=fit_committee,
-                               predict=predict_committee,
+                               fit_committee=fit_committee,
+                               predict_committee=predict_committee,
                                disagreement="vote_entropy")
-
   expect_equal(length(query_out$query), 1)
 })
 
@@ -62,9 +61,8 @@ test_that("QBC works with posterior-entropy disagreement", {
 
   set.seed(42)
   query_out <- query_committee(x=x, y=y_missing,
-                               fit=fit_committee,
-                               predict=predict_committee,
+                               fit_committee=fit_committee,
+                               predict_committee=predict_committee,
                                disagreement="post_entropy")
-
   expect_equal(length(query_out$query), 1)
 })

@@ -98,17 +98,13 @@ query_committee <- function(x, y, fit_committee, predict_committee,
   y <- factor(y)
   split_out <- split_labeled(x, y)
 
-	# Trains each classifier in the committee with the 'caret' implementation.
   # TODO: Add parallel option
-  committee_fits <- lapply(fit_committee, function(classifier) {
-    with(split_out, classifier(x=x_labeled, y=y_labeled))
-  })
-
   # Classifies the unlabeled observations with each committee member and also
   # determines their posterior probabilities.
-  committee_predictions <- lapply(committee_fits, function(classifier_fit) {
-    predict(classifier_fit, split_out$x_unlabeled)
-  })
+  committee_predictions <- mapply(function(fit_f, predict_f) {
+    fit_out <- with(split_out, fit_f(x_labeled, y_labeled))
+    predict_f(fit_out, split_out$x_unlabeled)
+  }, fit_committee, predict_committee, SIMPLIFY=FALSE)
 
 	disagreement <- switch(disagreement,
                          vote_entropy=vote_entropy(committee_predictions),
