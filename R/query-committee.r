@@ -28,9 +28,8 @@
 #' the default.
 #'
 #' To calculate the committee disagreement, we use the formulae from Dr. Burr
-#' Settles' "Active Learning Literature Survey" available on his website.
-#' At the time this function was coded, the literature survey had last been
-#' updated on January 26, 2010.
+#' Settles' excellent "Active Learning Literature Survey" available at
+#' \url{http://burrsettles.com/pub/settles.activelearning.pdf}.
 #'
 #' We require a user-specified supervised classifier from the \code{\link{caret}}
 #' R package. Furthermore, we assume that the classifier returns posterior
@@ -71,16 +70,28 @@
 #' # For demonstration, suppose that few observations are labeled in 'y'.
 #' y <- replace(y, -c(1:12, 51:62, 101:112), NA)
 #'
-#' committee <- c("lda", "qda", "gbm")
-#' query_committee(x=x, y=y, committee=committee, num_query=3)$query
-#' query_committee(x=x, y=y, committee=committee, disagreement="post_entropy",
-#'                 num_query=5)$query
-query_committee <- function(x, y, committee,
+#' fit_committee <- list(
+#'   lda=function(x, y) { MASS::lda(x, y) },
+#'   qda=function(x, y) { MASS::qda(x, y) },
+#'   random_forest=function(x, y) { randomForest::randomForest(x, y, ntree=50, maxnodes=5) }
+#' )
+#'
+#' predict_committee <- list(
+#'   lda=function(object, x) { predict(object, x)$posterior },
+#'   qda=function(object, x) { predict(object, x)$posterior },
+#'   random_forest=function(object, x) { predict(object, x, type="prob") }
+#' )
+#'
+#' query_committee(x=x, y=y, fit_committee=fit_committee,
+#'                 predict_committee=predict_committee, num_query=3)$query
+#'
+#' query_committee(x=x, y=y, fit_committee=fit_committee,
+#'                 predict_committee=predict_committee,
+#'                 disagreement="post_entropy", num_query=3)$query
+#'
+query_committee <- function(x, y, fit_committee, predict_committee,
                             disagreement=c("kullback", "vote_entropy", "post_entropy"),
                             num_query=1, ...) {
-  # Validates the classifier string.
-  dev_null <- lapply(committee, validate_classifier, posterior_prob=TRUE)
-
   disagreement <- match.arg(disagreement)
 
   x <- as.matrix(x)
@@ -88,28 +99,26 @@ query_committee <- function(x, y, committee,
   split_out <- split_labeled(x, y)
 
 	# Trains each classifier in the committee with the 'caret' implementation.
-  committee_fits <- lapply(committee, function(classifier) {
-    train(x=split_out$x_labeled,
-          y=split_out$y_labeled,
-          method=classifier)
+  # TODO: Add parallel option
+  committee_fits <- lapply(fit_committee, function(classifier) {
+    with(split_out, classifier(x=x_labeled, y=y_labeled))
   })
 
   # Classifies the unlabeled observations with each committee member and also
   # determines their posterior probabilities.
-	committee_class <- predict(committee_fits, test_x)
-  committee_class <- do.call(cbind, lapply(committee_class, as.character))
+  committee_predictions <- lapply(committee_fits, function(classifier_fit) {
+    predict(classifier_fit, split_out$x_unlabeled)
+  })
 
-	committee_post <- predict(committee_fits, test_x, type="prob")
-  
 	disagreement <- switch(disagreement,
-                         vote_entropy=vote_entropy(committee_class),
-                         post_entropy=post_entropy(committee_post),
-                         kullback=kullback(committee_post))
+                         vote_entropy=vote_entropy(committee_predictions),
+                         post_entropy=post_entropy(committee_predictions),
+                         kullback=kullback(committee_predictions))
 
   query <- order(disagreement, decreasing=TRUE)[seq_len(num_query)]
-	
-  list(query=query, disagreement=disagreement, committee_class=committee_class,
-       committee_post=committee_post)
+
+  list(query=query, disagreement=disagreement,
+       committee_predictions=committee_predictions)
 }
 
 # TODO: Deprecate `query_by_committee` because verbose.

@@ -5,13 +5,13 @@ y <- iris[, 5]
 y_missing <- replace(y, -c(1:10, 51:60, 101:110), NA)
 
 test_that("QBC works with Kullback disagreement", {
-  fit_comittee <- list(
+  fit_committee <- list(
     lda=function(x, y) { MASS::lda(x, y) },
     qda=function(x, y) { MASS::qda(x, y) },
     random_forest=function(x, y) { randomForest::randomForest(x, y, ntree=50, maxnodes=5) }
   )
 
-  predict_comittee <- list(
+  predict_committee <- list(
     lda=function(object, x) { predict(object, x)$posterior },
     qda=function(object, x) { predict(object, x)$posterior },
     random_forest=function(object, x) { predict(object, x, type="prob") }
@@ -26,13 +26,13 @@ test_that("QBC works with Kullback disagreement", {
 })
 
 test_that("QBC works with vote-entropy disagreement", {
-  fit_comittee <- list(
+  fit_committee <- list(
     lda=function(x, y) { MASS::lda(x, y) },
     qda=function(x, y) { MASS::qda(x, y) },
     random_forest=function(x, y) { randomForest::randomForest(x, y, ntree=50, maxnodes=5) }
   )
 
-  predict_comittee <- list(
+  predict_committee <- list(
     lda=function(object, x) { predict(object, x)$class },
     qda=function(object, x) { predict(object, x)$class },
     random_forest=function(object, x) { predict(object, x, type="response") }
@@ -48,13 +48,13 @@ test_that("QBC works with vote-entropy disagreement", {
 })
 
 test_that("QBC works with posterior-entropy disagreement", {
-  fit_comittee <- list(
+  fit_committee <- list(
     lda=function(x, y) { MASS::lda(x, y) },
     qda=function(x, y) { MASS::qda(x, y) },
     random_forest=function(x, y) { randomForest::randomForest(x, y, ntree=50, maxnodes=5) }
   )
 
-  predict_comittee <- list(
+  predict_committee <- list(
     lda=function(object, x) { predict(object, x)$posterior },
     qda=function(object, x) { predict(object, x)$posterior },
     random_forest=function(object, x) { predict(object, x, type="prob") }
