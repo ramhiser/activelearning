@@ -90,7 +90,7 @@ query_bagging <- function(x, y, fit_f, predict_f,
   p <- ncol(x)
   split_out <- split_labeled(x, y)
 
-  bag_control <- caret::bagControl(
+  bag_control <- bagControl(
       fit=fit_f,
       predict=predict_f,
       aggregate=disagree_f,

@@ -16,7 +16,6 @@
 #' @docType package
 #' @name activelearning
 #' @aliases activelearning package-activelearning
-#' @import caret entropy mlbench parallel
 NULL
 
 #' Active Learning in R
