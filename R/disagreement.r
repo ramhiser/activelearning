@@ -14,6 +14,7 @@ vote_entropy <- function(x, type='class', entropy_method='ML') {
   disagreement
 }
 
+#' @importFrom entropy entropy.plugin
 post_entropy <- function(x, type='posterior') {
   avg_post <- Reduce('+', x) / length(x)
   apply(avg_post, 1, function(obs_post) {
@@ -30,6 +31,7 @@ kullback <- function(x, type='posterior') {
   Reduce('+', kullback_members) / length(kullback_members)
 }
 
+#' @importFrom entropy entropy.plugin
 entropy_uncertainty <- function(posterior) {
   apply(posterior, 1, entropy.plugin)
 }

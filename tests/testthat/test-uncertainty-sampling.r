@@ -51,7 +51,7 @@ test_that("uncertainty_sampling works correctly with the LDA classifier and the 
   lda_margin <- apply(lda_posterior, 1, function(post_i) {
     post_i[order(post_i, decreasing=T)[1:2]] %*% c(1, -1)
   })
-  lda_entropy <- apply(lda_posterior, 1, entropy.plugin)
+  lda_entropy <- apply(lda_posterior, 1, entropy::entropy.plugin)
 
   al_least_conf <- uncertainty_sampling(x=x, y=y_missing,
                                         classifier="lda",
