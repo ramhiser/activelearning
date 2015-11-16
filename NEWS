@@ -11,6 +11,10 @@ UPDATES
   `query_committee()`. Although `query_by_committee()` still exists, it will be
   deprecated in a future release.
 
+* `query_random()`: For uniformity, `random_query()` is now `query_random()`.
+  Although `random_query()` still exists, it will be deprecated in a future
+  release.
+
 activelearning 0.1
 -------------
 
@@ -23,7 +27,7 @@ NEW FEATURES
   true labels. The framework is particularly useful when there are very few
   labeled observations relative to a large number of unlabeled observations, and
   the user seeks to determine as few true labels as possible to achieve highly
-  accurate classifiers.  
+  accurate classifiers.
 
 ACTIVE LEARNING METHODS
 
@@ -72,4 +76,3 @@ MISCELLANEOUS
 * `query_oracle()` is a helper function that reports the true classification for
   a set of unlabeled observations, if known. This is useful for simulation
   studies.
-

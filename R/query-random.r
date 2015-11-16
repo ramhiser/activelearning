@@ -32,12 +32,15 @@
 #' @param num_query the number of observations to be be queried.
 #' @return a list that contains the least_certain observation and miscellaneous
 #' results. See above for details.
-random_query <- function(y, num_query = 1) {
+query_random <- function(y, num_query=1) {
 	unlabeled <- which_unlabeled(y)
   if (length(unlabeled) <= 1 || length(unlabeled) <= num_query) {
     query <- unlabeled
   } else {
     query <- sample(unlabeled, num_query)
   }
-	list(query = query, unlabeled = unlabeled)
+	list(query=query, unlabeled=unlabeled)
 }
+
+# TODO: Deprecate `random_query` because uniformity.
+random_query <- query_random

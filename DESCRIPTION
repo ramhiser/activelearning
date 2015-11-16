@@ -25,17 +25,16 @@ Depends:
     caret (>= 6.0),
     entropy,
     itertools2,
-    mlbench,
     parallel
 License: MIT
 Collate:
-    'random_query.r'
-    'oracle.r'
     'activelearning.r'
-    'helpers.r'
     'activelearning-sim.r'
     'disagreement.r'
+    'helpers.r'
+    'oracle.r'
     'query-bagging.r'
     'query-committee.r'
+    'query-random.r'
     'uncertainty-sampling.r'
 RoxygenNote: 5.0.0
