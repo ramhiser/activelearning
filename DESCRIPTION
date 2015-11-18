@@ -30,7 +30,6 @@ Imports:
 License: MIT
 Collate:
     'activelearning.r'
-    'activelearning-sim.r'
     'disagreement.r'
     'helpers.r'
     'oracle.r'
