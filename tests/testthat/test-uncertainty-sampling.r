@@ -34,7 +34,7 @@ test_that("An error occurs when the classifier is not found in 'caret'", {
                e_msg)
 })
 
-test_that("uncertainty_sampling works correctly with the LDA classifier and the iris data set", {
+test_that("uncertainty_sampling works correctly with LDA", {
   require('MASS')
 
   split_out <- activelearning:::split_labeled(x, y_missing)
@@ -67,4 +67,31 @@ test_that("uncertainty_sampling works correctly with the LDA classifier and the 
   expect_equal(lda_least_conf, al_least_conf$uncertainty)
   expect_equal(lda_margin, al_margin$uncertainty)
   expect_equal(lda_entropy, al_entropy$uncertainty)
+
+  expect_equal(length(al_least_conf$query), 1)
+  expect_equal(length(al_margin$query), 1)
+  expect_equal(length(al_entropy$query), 1)
+})
+
+test_that("uncertainty_sampling queries multiple observations correctly", {
+  require('MASS')
+
+  split_out <- activelearning:::split_labeled(x, y_missing)
+
+  al_least_conf <- uncertainty_sampling(x=x, y=y_missing,
+                                        classifier="lda",
+                                        uncertainty="least_confidence",
+                                        num_query=5)
+  al_margin <- uncertainty_sampling(x=x, y=y_missing,
+                                    classifier="lda",
+                                    uncertainty="margin",
+                                    num_query=5)
+  al_entropy <- uncertainty_sampling(x=x, y=y_missing,
+                                     classifier="lda",
+                                     uncertainty="entropy",
+                                     num_query=5)
+
+  expect_equal(length(al_least_conf$query), 5)
+  expect_equal(length(al_margin$query), 5)
+  expect_equal(length(al_entropy$query), 5)
 })

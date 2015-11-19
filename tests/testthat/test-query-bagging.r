@@ -15,6 +15,10 @@ test_that("QBB works with Kullback disagreement", {
   query_out <- query_bagging(x=x, y=y_missing, fit=fit_f, predict=predict_f,
                              disagreement="kullback", C=10)
   expect_equal(length(query_out$query), 1)
+
+  query_out <- query_bagging(x=x, y=y_missing, fit=fit_f, predict=predict_f,
+                             disagreement="kullback", C=10, num_query=5)
+  expect_equal(length(query_out$query), 5)
 })
 
 test_that("QBB works with vote-entropy disagreement", {
@@ -25,10 +29,13 @@ test_that("QBB works with vote-entropy disagreement", {
     predict(object, x)$class
   }
 
-  set.seed(42)
   query_out <- query_bagging(x=x, y=y_missing, fit=fit_f, predict=predict_f,
                              disagreement="vote_entropy", C=5)
   expect_equal(length(query_out$query), 1)
+
+  query_out <- query_bagging(x=x, y=y_missing, fit=fit_f, predict=predict_f,
+                             disagreement="vote_entropy", C=5, num_query=5)
+  expect_equal(length(query_out$query), 5)
 })
 
 test_that("QBB works with posterior-entropy disagreement", {
@@ -42,6 +49,10 @@ test_that("QBB works with posterior-entropy disagreement", {
   query_out <- query_bagging(x=x, y=y_missing, fit=fit_f, predict=predict_f,
                              disagreement="post_entropy", C=10)
   expect_equal(length(query_out$query), 1)
+
+  query_out <- query_bagging(x=x, y=y_missing, fit=fit_f, predict=predict_f,
+                             disagreement="post_entropy", C=10, num_query=5)
+  expect_equal(length(query_out$query), 5)
 })
 
 # Issue #9
