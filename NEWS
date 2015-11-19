@@ -15,6 +15,8 @@ UPDATES
   Although `random_query()` still exists, it will be deprecated in a future
   release.
 
+* `activelearning()`: Deprecated and then removed this method.
+
 * `activelearning_sim()`: Deprecated and then removed this method.
 
 activelearning 0.1
