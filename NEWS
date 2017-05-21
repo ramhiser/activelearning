@@ -1,3 +1,11 @@
+activelearning 0.1.2
+-------------
+
+UPDATES
+
+* `query_bagging()`: The example was breaking due to a misspecified `predict_f`
+  function.
+
 activelearning 0.1.1
 -------------
 

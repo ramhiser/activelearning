@@ -87,7 +87,7 @@ fit_f <- function(x, y, ...) {
   MASS::lda(x, y, ...)
 }
 predict_f <- function(object, x) {
-  predict(object, x)$class
+  predict(object, x)$posterior
 }
 
 query_bagging(x=x, y=y, fit_f=fit_f, predict_f=predict_f, C=10)
